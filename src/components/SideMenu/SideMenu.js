@@ -6,18 +6,16 @@ import {
     PROFILE_PIC_ADD_COLOR_HOVER,
     USER_ROLE_COLOR
 } from "../../assets/theme/colors";
-import profile from './profile.png';
 import Divider from "@material-ui/core/Divider";
-import {menuItems} from './../../assets/datas/menuItems';
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
-import Fab from "@material-ui/core/Fab";
 import AddIcon from '@material-ui/icons/Add';
 import IconButton from "@material-ui/core/IconButton";
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) =>({
     menuDiv: {
@@ -25,6 +23,8 @@ const useStyles = makeStyles((theme) =>({
         height: '100vh',
         backgroundColor: PRIMARY_COLOR,
         borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+        position: 'sticky',
+        top: 0,
     },
     profile: {
         display: 'flex',
@@ -63,12 +63,12 @@ const useStyles = makeStyles((theme) =>({
     },
 }));
 
-const SideMenu = () => {
+const SideMenu = ({menu, selected}) => {
     const classes = useStyles();
 
     const ListItemLink = (props) => {
         return(
-            <ListItem button component={"a"} {...props} />
+            <ListItem button component={"a"} {...props}/>
         )
     }
 
@@ -89,7 +89,7 @@ const SideMenu = () => {
                             </IconButton>
                         }
                     >
-                        <Avatar alt="Travis Howard" src={profile} />
+                        <Avatar alt="Travis Howard" src={"https://i.pravatar.cc/200"} />
                     </Badge>
                     <div className={classes.profileInfo}>
                         <h3>Guest Name</h3>
@@ -98,8 +98,8 @@ const SideMenu = () => {
                 </div>
                 <Divider />
                 <List className={classes.list}>
-                    {menuItems.map((item, index) => (
-                        <ListItemLink key={index} href={item.linkTo}>
+                    {menu.map((item, index) => (
+                        <ListItemLink key={index} href={item.linkTo} selected={selected === item.label}>
                             <ListItemIcon>{item.icon}</ListItemIcon>
                             <ListItemText>{item.label}</ListItemText>
                         </ListItemLink>
@@ -108,6 +108,10 @@ const SideMenu = () => {
             </div>
         </>
     )
+};
+
+SideMenu.propTypes = {
+    menu: PropTypes.array.isRequired,
 };
 
 export default SideMenu;

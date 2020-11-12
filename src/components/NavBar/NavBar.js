@@ -15,12 +15,15 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         backgroundColor: PRIMARY_COLOR,
         boxShadow: 'none',
+        position: 'sticky',
+        top: 0,
     },
     toolBar: {
         flexDirection: 'initial',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        padding: '0 20px'
     },
     search: {
         position: 'relative',
@@ -32,7 +35,7 @@ const useStyles = makeStyles(theme => ({
         marginLeft: 0,
         width: '100%',
         [theme.breakpoints.up('sm')]: {
-            marginLeft: theme.spacing(1),
+            // marginLeft: theme.spacing(1),
             width: 'auto',
         },
     },

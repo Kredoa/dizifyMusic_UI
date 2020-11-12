@@ -1,33 +1,27 @@
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
-import SideMenu from "../../../components/SideMenu/SideMenu";
-import {BACKGROUND_COLOR} from "../../../assets/theme/colors";
-import NavBar from "../../../components/NavBar/NavBar";
+import FavorisList from "../../../components/FavoritesList/FavorisList";
+import { favoritesList } from "../../../assets/datas/Favorites/favoritesList";
+import PlaylistList from "../../../components/PlaylistsList/PlaylistsList";
+import {playlists} from "../../../assets/datas/Playlists/playlists";
+import AlbumsList from "../../../components/AlbumsList/AlbumsList";
+import AuthorsList from "../../../components/AuthorsList/AuhtorsList";
+import {authorslist} from "../../../assets/datas/Authors/authors";
+import {albumlist} from "../../../assets/datas/Albums/albums";
 
 const useStyles = makeStyles(theme => ({
-    root: {
-        display: 'flex',
-        // position: 'relative',
-        justifyContent: 'flex-start',
-        backgroundColor: BACKGROUND_COLOR,
-    },
-    content: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        position: 'relative',
-        flexGrow: 1,
+    body: {
+        padding: '20px',
     }
 }));
 const HomePage = () => {
     const classes = useStyles()
     return(
-        <div className={classes.root}>
-            <SideMenu />
-            <div className={classes.content}>
-                <NavBar />
-                <h2> Content </h2>
-            </div>
+        <div className={classes.body}>
+            <FavorisList favorites={favoritesList} />
+            <PlaylistList playlists={playlists}/>
+            <AlbumsList albums={albumlist}/>
+            <AuthorsList authors={authorslist}/>
         </div>
     )
 }
