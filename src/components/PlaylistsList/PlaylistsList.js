@@ -39,7 +39,7 @@ const PlaylistList = ({playlists}) => {
     return(
         <div className={classes.playlistsDiv}>
             <div className={classes.title}>
-                <a href="#">
+                <a href={"/playlists"}>
                     <h2>
                         Playlists
                     </h2>

@@ -39,7 +39,7 @@ const FavorisList = ({favorites}) => {
     return(
         <div className={classes.favoritesDiv}>
             <div className={classes.title}>
-                <a href="#">
+                <a href={"/favorites"}>
                     <h2>
                         Favoris
                     </h2>

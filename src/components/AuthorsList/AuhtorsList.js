@@ -44,7 +44,7 @@ const AuthorsList = ({authors}) => {
     return(
         <div className={classes.albumsDiv}>
             <div className={classes.title}>
-                <a href="#">
+                <a href={'/artists'}>
                     <h2>
                         Artistes
                     </h2>

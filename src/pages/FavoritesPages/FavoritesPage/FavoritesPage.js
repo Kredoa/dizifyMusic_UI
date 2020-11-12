@@ -10,8 +10,7 @@ const useStyles = makeStyles(theme => ({
     favoritesTab: {
         padding: '5px 0',
         display: 'grid',
-        gridTemplateAreas: '"card card card card"',
-        gridTemplateColumns: 'repeat(4, minmax(150px, 300px))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 395px))',
         gridGap: '1rem',
     }
 }));

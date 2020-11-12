@@ -18,16 +18,16 @@ export const menuItems = [
     {
         icon: <QueueMusicOutlinedIcon />,
         label: 'Playlists',
-        linkTo: '#',
+        linkTo: '/playlists',
     },
     {
         icon: <AlbumOutlinedIcon />,
         label: 'Albums',
-        linkTo: '#',
+        linkTo: '/albums',
     },
     {
         icon: <AccountBoxIcon />,
         label: 'Artistes',
-        linkTo: '#',
+        linkTo: '/artists',
     },
 ];
