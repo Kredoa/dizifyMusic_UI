@@ -2,8 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../../../assets/datas/Types/entities";
 import AuthorDetails from "../../Details/Author/AuthorDetails";
-import AlbumDetails from "../../Details/AlbumDetails";
-import TitleDetails from "../../Details/TitleDetails";
+import AlbumDetails from "../../Details/Album/AlbumDetails";
 
 const FavoriteDetails = ({id, type}) => {
     return (
@@ -14,9 +13,7 @@ const FavoriteDetails = ({id, type}) => {
                     ? <AuthorDetails/>
                     : type === ALBUM_TYPE
                         ? <AlbumDetails />
-                        : type === TITRE_TYPE
-                            ? <TitleDetails/>
-                            : <div></div>
+                        : <div></div>
             }
         </>
     );

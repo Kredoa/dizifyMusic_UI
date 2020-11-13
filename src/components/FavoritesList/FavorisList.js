@@ -2,7 +2,7 @@ import React from "react";
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import {makeStyles} from "@material-ui/core/styles";
 import {BLACK} from "../../assets/theme/colors";
-import Favoris from "./Favorite/Favoris";
+import FavorisItem from "./Favorite/FavorisItem";
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
@@ -48,7 +48,7 @@ const FavorisList = ({favorites}) => {
             </div>
             <div className={classes.list}>
                 {favorites.map((fav, index) =>
-                    <Favoris item={fav} key={index}/>
+                    <FavorisItem item={fav} key={index}/>
                 )}
             </div>
         </div>

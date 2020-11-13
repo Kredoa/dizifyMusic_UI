@@ -1,11 +1,17 @@
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
-import {author} from "../../../assets/datas/Authors/author";
 import Button from "@material-ui/core/Button";
 import {createMuiTheme, makeStyles} from "@material-ui/core/styles";
 import {ThemeProvider} from "@material-ui/styles";
-import {artistAlbums} from "../../../assets/datas/Authors/ArtistDetails/artistAlbums";
-import AuthorAlbumCard from "./components/Album/AuthorAlbumCard";
+import {album} from "../../../assets/datas/Albums/album";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemText from "@material-ui/core/ListItemText";
+import MusicNoteIcon from '@material-ui/icons/MusicNote';
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import IconButton from "@material-ui/core/IconButton";
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -15,7 +21,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 1,
-        height: '60vh',
+        height: '70vh',
         '&:before': {
             content: '""',
             position: 'absolute',
@@ -65,38 +71,33 @@ const useStyles = makeStyles(theme => ({
         }
     },
     list: {
-        padding: '5px 0',
-        display: 'grid',
-        // gridTemplateAreas: '"card card card card card card card"',
-        // gridGap: '20px',
-        gridTemplateColumns: 'repeat(4, minmax(150px, 1fr))',
-        gridGap: '1rem',
+        width: '100%',
     },
 }));
 
-const AuthorDetails = () => {
+const AlbumDetails = () => {
 
     const theme = createMuiTheme({
         image: {
-            url: author.image,
+            url: album.image,
         }
     });
 
     return (
         <>
             <ThemeProvider theme={theme}>
-                <Artist/>
+                <Album/>
             </ThemeProvider>
         </>
     );
 };
 
-const Artist = () => {
+const Album = () => {
     const classes = useStyles();
 
     const isFavorite = false;
 
-    function getRandomFollowers(min, max) {
+    function getRandomListening(min, max) {
         let valMin = Math.ceil(min);
         let valMax = Math.floor(max);
         let res = Math.floor(Math.random() * (valMax - valMin) + valMin);
@@ -106,8 +107,8 @@ const Artist = () => {
     return(
         <>
             <div className={classes.header}>
-                <Avatar className={classes.avatar} alt={author.name} src={"https://i.pravatar.cc/200"} />
-                <h2>{author.name}</h2>
+                <Avatar variant={'square'} className={classes.avatar} alt={album.name} src={album.image} />
+                <h2>{album.name}</h2>
                 {isFavorite
                     ? <Button variant={"contained"} color={"primary"} className={classes.favAdd}>
                         Retirer des favoris
@@ -116,32 +117,40 @@ const Artist = () => {
                         Ajouter aux favoris
                     </Button>
                 }
-                <span>{getRandomFollowers(1000000, 3000000)} Auditeurs par mois</span>
+                <span>{getRandomListening(1000000, 3000000)} écoutes</span>
+                <span>Album de {album.author.name} · {new Date(album.publicationDate).getFullYear()}</span>
                 <Button variant={"contained"} className={classes.playButton} color={"primary"}>Lecture aléatoire</Button>
             </div>
             <div className={classes.body}>
                 <div className={classes.content}>
-                    <h2>Description</h2>
-                    {author.description
-                        ? <p>{author.description}</p>
-                        : <p>Aucune description disponible.</p>
-                    }
-                </div>
-                <div className={classes.content}>
-                    <h2>Albums</h2>
-                    <div className={classes.list}>
-                        {artistAlbums.map((item, index) => (
-                            <AuthorAlbumCard id={item.id} item={item} />
-                        ))}
-                    </div>
-                </div>
-                <div>
-                    <h2>Autre(s) titre(s)</h2>
-                    <div></div>
+                    <h2>Titres</h2>
+                    <List className={classes.list}>
+                        {
+                            album.titles.map((title, index) => (
+                                <ListItem button>
+                                    <ListItemAvatar>
+                                        {
+                                            title.image
+                                                ? <Avatar variant={'square'} src={title.image} />
+                                                : <Avatar variant={'square'}>
+                                                    <MusicNoteIcon />
+                                                </Avatar>
+                                        }
+                                    </ListItemAvatar>
+                                    <ListItemText primary={title.name} secondary={title.author.name+" · "+title.duration} />
+                                    <ListItemSecondaryAction>
+                                        <IconButton edge="end" aria-label="delete">
+                                            <MoreVertIcon />
+                                        </IconButton>
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            ))
+                        }
+                    </List>
                 </div>
             </div>
         </>
     )
 }
 
-export default AuthorDetails;
+export default AlbumDetails;

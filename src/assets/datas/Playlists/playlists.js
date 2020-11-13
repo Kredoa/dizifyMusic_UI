@@ -1,52 +1,37 @@
-import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../Types/entities";
-
 export const playlists = [
     {
+        id: 7,
         name: "Ma playlist",
-        titres: [
-            //Titre
+        updatedAt: "2020-11-11T13:40:59.000+01:00",
+        createdAt: "2020-11-11T13:40:59.000+01:00",
+        user: {
+            id: 4,
+            name: "jean",
+            email: "jean@gmail.com",
+            updatedAt: "2020-11-11T13:14:25.000+01:00",
+            createdAt: "2020-11-11T13:14:25.000+01:00"
+        },
+        titles: [
             {
-                type: TITRE_TYPE,
-                name: "Cabeza",
-                duree: "2:28",
-                auteur: {
-                    type: ARTISTE_TYPE,
-                    name: "OBOY",
-                    image: "https://i.pravatar.cc/200"
-                },
-                album:     {
-                    type: ALBUM_TYPE,
-                    name: "Mafana",
-                    date: 2020,
-                    image: "https://picsum.photos/200",
-                    auteur: {
-                        type: ARTISTE_TYPE,
-                        name: "OBOY",
-                        image: "https://i.pravatar.cc/200"
-                    },
-                },
+                id: 2,
+                name: "yes",
+                duration: "15:30:14",
+                updatedAt: "2020-11-11T13:12:09.000+01:00",
+                createdAt: "2020-11-11T13:12:09.000+01:00"
             },
-            //Titre
             {
-                type: TITRE_TYPE,
-                name: "Bande organisée",
-                duree: "5:56",
-                auteur: {
-                    type: ARTISTE_TYPE,
-                    name: "13 Organisé",
-                    image: "https://i.pravatar.cc/200"
-                },
-                album:     {
-                    type: ALBUM_TYPE,
-                    name: "13 Organisé",
-                    date: 2020,
-                    image: "https://picsum.photos/200",
-                    auteur: {
-                        type: ARTISTE_TYPE,
-                        name: "13 Organisé",
-                        image: "https://i.pravatar.cc/200"
-                    },
-                },
+                id: 2,
+                name: "yes",
+                duration: "15:30:14",
+                updatedAt: "2020-11-11T13:12:09.000+01:00",
+                createdAt: "2020-11-11T13:12:09.000+01:00"
+            },
+            {
+                id: 2,
+                name: "yes",
+                duration: "15:30:14",
+                updatedAt: "2020-11-11T13:12:09.000+01:00",
+                createdAt: "2020-11-11T13:12:09.000+01:00"
             },
         ]
     }

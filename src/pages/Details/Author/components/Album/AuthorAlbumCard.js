@@ -4,8 +4,9 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import {makeStyles} from "@material-ui/core/styles";
-import {USER_ROLE_COLOR} from "../../../assets/theme/colors";
 import PropTypes from "prop-types";
+import {USER_ROLE_COLOR} from "../../../../../assets/theme/colors";
+import {artistAlbums} from "../../../../../assets/datas/Authors/ArtistDetails/artistAlbums";
 
 
 const useStyles = makeStyles(theme => ({
@@ -21,14 +22,8 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const Author = ({item}) => {
+const AuthorAlbumCard = ({item, id}) => {
     const classes = useStyles();
-
-    const getNbTitres = (item) => {
-        const array =Array.from({length:20},(v,k)=>k*1);
-        const nb = array[Math.floor(Math.random()*array.length)];
-        return nb;
-    }
 
     return(
         <Card className={classes.card}>
@@ -36,20 +31,20 @@ const Author = ({item}) => {
                 <CardMedia
                     component="img"
                     alt={item.name}
-                    image={"https://i.pravatar.cc/200"}
+                    image={item.image}
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
                     <h2>{item.name}</h2>
-                    <span>{getNbTitres(item)} album(s)</span>
+                    <span>{item.titles.length} titre(s) · {new Date(item.publicationDate).getFullYear()} </span>
                 </CardContent>
             </CardActionArea>
         </Card>
     );
 };
 
-Author.propTypes = {
-    item: PropTypes.object.isRequired,
+AuthorAlbumCard.propTypes = {
+    id: PropTypes.string.isRequired,
 };
 
-export default Author;
+export default AuthorAlbumCard;

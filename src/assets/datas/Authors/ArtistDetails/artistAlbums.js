@@ -1,5 +1,5 @@
 export const artistAlbums = [
-    //Album
+    //AlbumItem
     {
         id: 9,
         name: "mon album",
@@ -40,7 +40,7 @@ export const artistAlbums = [
             createdAt: "2020-11-11T13:11:58.000+01:00"
         }
     },
-    //Album
+    //AlbumItem
     {
         id: 9,
         name: "mon album",
@@ -81,7 +81,7 @@ export const artistAlbums = [
             createdAt: "2020-11-11T13:11:58.000+01:00"
         }
     },
-    //Album
+    //AlbumItem
     {
         id: 9,
         name: "mon album",
@@ -122,7 +122,7 @@ export const artistAlbums = [
             createdAt: "2020-11-11T13:11:58.000+01:00"
         }
     },
-    //Album
+    //AlbumItem
     {
         id: 9,
         name: "mon album",
@@ -163,7 +163,7 @@ export const artistAlbums = [
             createdAt: "2020-11-11T13:11:58.000+01:00"
         }
     },
-    //Album
+    //AlbumItem
     {
         id: 9,
         name: "mon album",
@@ -204,7 +204,7 @@ export const artistAlbums = [
             createdAt: "2020-11-11T13:11:58.000+01:00"
         }
     },
-    //Album
+    //AlbumItem
     {
         id: 9,
         name: "mon album",

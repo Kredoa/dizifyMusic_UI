@@ -8,6 +8,9 @@ import {menuItems} from "./assets/datas/Menu/menuItems";
 import NavBar from "./components/NavBar/NavBar";
 import { Switch, Route, useLocation } from "react-router-dom";
 import FavoriteDetails from "./pages/FavoritesPages/FavoritesDetails/FavoriteDetails";
+import AlbumsPage from "./pages/AlbumsPage/AlbumsPage";
+import ArtistsPage from "./pages/ArtistsPage/ArtistsPage";
+import PlaylistsPage from "./pages/PlaylistsPage/PlaylistsPage";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -49,6 +52,18 @@ function App() {
                         let type = query.get("type");
                         setSelected('Favoris');
                         return id ? <FavoriteDetails id={id} type={type} {...props} /> : <FavoritesPage {...props} />
+                    }}/>
+                    <Route path="/albums" exact={true} render={(props) => {
+                        setSelected('Albums');
+                        return <AlbumsPage {...props} />
+                    }}/>
+                    <Route path="/artists" exact={true} render={(props) => {
+                        setSelected('Artistes');
+                        return <ArtistsPage {...props} />
+                    }}/>
+                    <Route path="/playlists" exact={true} render={(props) => {
+                        setSelected('Playlists');
+                        return <PlaylistsPage {...props} />
                     }}/>
                 </Switch>
             </div>

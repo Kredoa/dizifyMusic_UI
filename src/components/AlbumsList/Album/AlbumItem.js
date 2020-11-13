@@ -4,9 +4,8 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import {makeStyles} from "@material-ui/core/styles";
+import {USER_ROLE_COLOR} from "../../../assets/theme/colors";
 import PropTypes from "prop-types";
-import {USER_ROLE_COLOR} from "../../../../../assets/theme/colors";
-import {artistAlbums} from "../../../../../assets/datas/Albums/ArtistDetails/artistAlbums";
 
 
 const useStyles = makeStyles(theme => ({
@@ -22,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const AlbumCard = ({item, id}) => {
+const AlbumItem = ({item}) => {
     const classes = useStyles();
 
     return(
@@ -31,20 +30,20 @@ const AlbumCard = ({item, id}) => {
                 <CardMedia
                     component="img"
                     alt={item.name}
-                    image={item.image}
+                    image={"https://picsum.photos/200"}
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
                     <h2>{item.name}</h2>
-                    <span>{item.titles.length} titre(s) · {new Date(item.publicationDate).getFullYear()} </span>
+                    <span>Album de {item.author.name}</span>
                 </CardContent>
             </CardActionArea>
         </Card>
     );
 };
 
-AlbumCard.propTypes = {
-    id: PropTypes.string.isRequired,
+AlbumItem.propTypes = {
+    item: PropTypes.object.isRequired,
 };
 
-export default AlbumCard;
+export default AlbumItem;

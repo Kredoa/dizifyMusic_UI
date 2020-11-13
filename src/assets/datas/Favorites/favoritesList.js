@@ -7,7 +7,7 @@ export const favoritesList = [
         name: "Damso",
         image: "https://i.pravatar.cc/200"
     },
-    //Album
+    //AlbumItem
     {
         type: ALBUM_TYPE,
         name: "Mafana",
@@ -41,7 +41,7 @@ export const favoritesList = [
             },
         },
     },
-    //Album
+    //AlbumItem
     {
         type: ALBUM_TYPE,
         name: "QALF",

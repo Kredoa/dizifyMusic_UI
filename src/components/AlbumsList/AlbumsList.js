@@ -3,7 +3,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {BLACK} from "../../assets/theme/colors";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import PropTypes from "prop-types";
-import Album from "./Album/Album";
+import AlbumItem from "./Album/AlbumItem";
 
 
 const useStyles = makeStyles(theme => ({
@@ -52,8 +52,8 @@ const AlbumsList = ({albums}) => {
                 </a>
             </div>
             <div className={classes.list}>
-                {sortedAlbums.map((fav, index) =>
-                    <Album item={fav} key={index}/>
+                {sortedAlbums.map((alb, index) =>
+                    <AlbumItem item={alb} key={index}/>
                 )}
             </div>
         </div>

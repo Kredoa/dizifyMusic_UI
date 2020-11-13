@@ -101,6 +101,9 @@ const useStyles = makeStyles((theme) =>({
         right: 0,
         color: PRIMARY_COLOR,
         padding: 0,
+    },
+    displayNone: {
+        display: 'none',
     }
 }));
 
@@ -108,6 +111,7 @@ const SideMenu = ({menu, selected}) => {
     const classes = useStyles();
 
     const [playerRunning, setPlayerRunning] = useState(false);
+    const [player, setPlayer] = useState(false);
 
     const ListItemLink = (props) => {
         return(
@@ -153,7 +157,7 @@ const SideMenu = ({menu, selected}) => {
                         </ListItemLink>
                     ))}
                 </List>
-                <div className={classes.player}>
+                <div className={player ? classes.player : classes.displayNone}>
                     <div className={classes.image}>
                         <img src="https://i.pravatar.cc/200" alt=""/>
                         <IconButton aria-label="close" className={classes.close} >

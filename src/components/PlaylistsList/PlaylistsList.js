@@ -3,7 +3,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {BLACK} from "../../assets/theme/colors";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import PropTypes from "prop-types";
-import Playlist from "./Playlist/Playlist";
+import PlaylistItem from "./Playlist/PlaylistItem";
 
 const useStyles = makeStyles(theme => ({
     playlistsDiv:{
@@ -48,7 +48,7 @@ const PlaylistList = ({playlists}) => {
             </div>
             <div className={classes.list}>
                 {playlists.map((fav, index) =>
-                    <Playlist item={fav} key={index}/>
+                    <PlaylistItem item={fav} key={index}/>
                 )}
             </div>
         </div>

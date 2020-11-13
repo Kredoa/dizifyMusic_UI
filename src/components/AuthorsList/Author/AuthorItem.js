@@ -3,12 +3,9 @@ import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import {USER_ROLE_COLOR} from "../../../assets/theme/colors";
 import PropTypes from "prop-types";
-import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../../../assets/datas/Types/entities";
 
 
 const useStyles = makeStyles(theme => ({
@@ -24,8 +21,14 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const Playlist = ({item}) => {
+const AuthorItem = ({item}) => {
     const classes = useStyles();
+
+    const getNbTitres = (item) => {
+        const array =Array.from({length:20},(v,k)=>k*1);
+        const nb = array[Math.floor(Math.random()*array.length)];
+        return nb;
+    }
 
     return(
         <Card className={classes.card}>
@@ -33,20 +36,20 @@ const Playlist = ({item}) => {
                 <CardMedia
                     component="img"
                     alt={item.name}
-                    image={"https://picsum.photos/200"}
+                    image={"https://i.pravatar.cc/200"}
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
                     <h2>{item.name}</h2>
-                    <span>{item.titres.length} titre(s)</span>
+                    <span>{getNbTitres(item)} album(s)</span>
                 </CardContent>
             </CardActionArea>
         </Card>
     );
 };
 
-Playlist.propTypes = {
+AuthorItem.propTypes = {
     item: PropTypes.object.isRequired,
 };
 
-export default Playlist;
+export default AuthorItem;

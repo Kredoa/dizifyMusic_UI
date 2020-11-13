@@ -3,7 +3,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {BLACK} from "../../assets/theme/colors";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import PropTypes from "prop-types";
-import Author from "./Author/Author";
+import AuthorItem from "./Author/AuthorItem";
 
 
 const useStyles = makeStyles(theme => ({
@@ -53,7 +53,7 @@ const AuthorsList = ({authors}) => {
             </div>
             <div className={classes.list}>
                 {sortedAuthors.map((fav, index) =>
-                    <Author item={fav} key={index}/>
+                    <AuthorItem item={fav} key={index}/>
                 )}
             </div>
         </div>

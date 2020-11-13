@@ -24,47 +24,29 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const Favoris = ({item}) => {
+const PlaylistItem = ({item}) => {
     const classes = useStyles();
 
-    const getImage = (item) => {
-        if(item.type === TITRE_TYPE) {
-            if(item.album) {
-                return item.album.image;
-            } else {
-                return item.auteur.image;
-            }
-        } else {
-            return item.image;
-        }
-    }
     return(
         <Card className={classes.card}>
             <CardActionArea >
                 <CardMedia
                     component="img"
                     alt={item.name}
-                    image={getImage(item)}
+                    image={"https://picsum.photos/200"}
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
                     <h2>{item.name}</h2>
-                    {(item.type === ARTISTE_TYPE)
-                        ? <span>Artiste</span>
-                        : (item.type === ALBUM_TYPE)
-                            ? <span>Album de {item.auteur.name}</span>
-                            : (item.type === TITRE_TYPE)
-                                ? <span>Titre de {item.auteur.name}</span>
-                                : <span></span>
-                    }
+                    <span>{item.titres.length} titre(s)</span>
                 </CardContent>
             </CardActionArea>
         </Card>
     );
 };
 
-Favoris.propTypes = {
+PlaylistItem.propTypes = {
     item: PropTypes.object.isRequired,
 };
 
-export default Favoris;
+export default PlaylistItem;
