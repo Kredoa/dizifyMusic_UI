@@ -2,13 +2,13 @@ import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {BLACK} from "../../assets/theme/colors";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import AlbumItem from "./Album/AlbumItem";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import AuthorItem from "./Author/AuthorItem";
 import {BASE_URL_API} from "../../assets/config/config";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 
 const useStyles = makeStyles(theme => ({
-    albumsDiv:{
+    authorsDiv:{
         marginBottom: '20px',
     },
     title: {
@@ -41,39 +41,39 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const getAlbums = async () => {
-    const res = await fetch(`${BASE_URL_API}albums`);
+const getArtists = async () => {
+    const res = await fetch(`${BASE_URL_API}artists`);
     return await res.json();
 };
 
-const AlbumsList = () => {
+const AuthorsList = () => {
 
     const classes = useStyles();
-    const [albums, setAlbums] = useState();
+    const [authors, setAuthors] = useState();
 
     useEffect(() => {
-        getAlbums().then(res => {
+        getArtists().then(res => {
             const shuffled = res.sort(function(){return .5 - Math.random()});
-            const sortedAlbums = shuffled.slice(0,3);
-            setAlbums(sortedAlbums);
+            const sortedArtists = shuffled.slice(0,3);
+            setAuthors(sortedArtists);
         });
-    }, [setAlbums]);
+    }, [setAuthors]);
 
     return(
         <div className={classes.albumsDiv}>
             <div className={classes.title}>
-                <a href={'/albums'}>
+                <a href={'/artists'}>
                     <h2>
-                        Albums
+                        Artistes
                     </h2>
                     <ChevronRightIcon />
                 </a>
             </div>
-            { albums
+            { authors
                 ? (
                     <div className={classes.list}>
-                        {albums.map((alb, index) =>
-                            <AlbumItem item={alb} key={index}/>
+                        {authors.map((art, index) =>
+                            <AuthorItem item={art} key={index}/>
                         )}
                     </div>
                 )
@@ -87,4 +87,4 @@ const AlbumsList = () => {
     );
 }
 
-export default AlbumsList;
+export default AuthorsList;

@@ -9,12 +9,17 @@ import PropTypes from "prop-types";
 
 
 const useStyles = makeStyles(theme => ({
-    card: {
-        maxWidth: '150px',
+    cardArea: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        '&>img': {
+            maxWidth: '10em',
+            height: '10em',
+        },
     },
     cardContent: {
-        padding: '5px',
-        textAlign: 'center',
+        padding: '10px',
         '&>span': {
             color: USER_ROLE_COLOR,
         },
@@ -25,8 +30,8 @@ const AlbumItem = ({item}) => {
     const classes = useStyles();
 
     return(
-        <Card className={classes.card}>
-            <CardActionArea >
+        <Card>
+            <CardActionArea className={classes.cardArea} href={`/albums?id=${item.id}`}>
                 <CardMedia
                     component="img"
                     alt={item.name}

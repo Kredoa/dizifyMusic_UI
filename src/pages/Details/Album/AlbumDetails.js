@@ -12,6 +12,7 @@ import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -80,7 +81,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const AlbumDetails = () => {
+const AlbumDetails = ({id}) => {
 
     const theme = createMuiTheme({
         image: {
@@ -91,7 +92,7 @@ const AlbumDetails = () => {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <Album/>
+                <Album id={id}/>
             </ThemeProvider>
         </>
     );
@@ -160,5 +161,9 @@ const Album = () => {
         </>
     )
 }
+
+AlbumDetails.propTypes = {
+    id: PropTypes.string.isRequired,
+};
 
 export default AlbumDetails;
