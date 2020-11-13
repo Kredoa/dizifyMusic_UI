@@ -6,6 +6,8 @@ import {createMuiTheme, makeStyles} from "@material-ui/core/styles";
 import {ThemeProvider} from "@material-ui/styles";
 import {artistAlbums} from "../../../assets/datas/Authors/ArtistDetails/artistAlbums";
 import AuthorAlbumCard from "./components/Album/AuthorAlbumCard";
+import IconButton from "@material-ui/core/IconButton";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -72,6 +74,11 @@ const useStyles = makeStyles(theme => ({
         gridTemplateColumns: 'repeat(4, minmax(150px, 1fr))',
         gridGap: '1rem',
     },
+    deleteButton: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+    },
 }));
 
 const AuthorDetails = () => {
@@ -106,6 +113,9 @@ const Artist = () => {
     return(
         <>
             <div className={classes.header}>
+                <IconButton className={classes.deleteButton} aria-label="delete">
+                    <MoreVertIcon />
+                </IconButton>
                 <Avatar className={classes.avatar} alt={author.name} src={"https://i.pravatar.cc/200"} />
                 <h2>{author.name}</h2>
                 {isFavorite

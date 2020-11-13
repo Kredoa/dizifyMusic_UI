@@ -73,6 +73,11 @@ const useStyles = makeStyles(theme => ({
     list: {
         width: '100%',
     },
+    deleteButton: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+    }
 }));
 
 const PlaylistDetails = () => {
@@ -94,13 +99,17 @@ const PlaylistDetails = () => {
 
 const Playlist = () => {
     const classes = useStyles();
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
 
     return(
         <>
             <div className={classes.header}>
+                <IconButton className={classes.deleteButton} aria-label="delete">
+                    <MoreVertIcon />
+                </IconButton>
                 <Avatar variant={'square'} className={classes.avatar} alt={playlist.name} src={playlist.image ? playlist.image : "https://picsum.photos/700/500"} />
                 <h2>{playlist.name}</h2>
-                <span>Crée le {new Date(playlist.createdAt)}</span>
+                <span>Crée le {new Date(playlist.createdAt).toLocaleDateString('fr-FR', options)}</span>
                 <Button variant={"contained"} className={classes.playButton} color={"primary"}>Lecture aléatoire</Button>
             </div>
             <div className={classes.body}>

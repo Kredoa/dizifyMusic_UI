@@ -38,7 +38,7 @@ const PlaylistItem = ({item}) => {
                 />
                 <CardContent className={classes.cardContent}>
                     <h2>{item.name}</h2>
-                    <span>{item.titres.length} titre(s)</span>
+                    <span>{item.titles.length} titre(s)</span>
                 </CardContent>
             </CardActionArea>
         </Card>

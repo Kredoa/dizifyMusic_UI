@@ -11,6 +11,10 @@ import FavoriteDetails from "./pages/FavoritesPages/FavoritesDetails/FavoriteDet
 import AlbumsPage from "./pages/AlbumsPage/AlbumsPage";
 import ArtistsPage from "./pages/ArtistsPage/ArtistsPage";
 import PlaylistsPage from "./pages/PlaylistsPage/PlaylistsPage";
+import AlbumDetails from "./pages/Details/Album/AlbumDetails";
+import AlbumsList from "./components/AlbumsList/AlbumsList";
+import AuthorDetails from "./pages/Details/Author/AuthorDetails";
+import PlaylistDetails from "./pages/Details/Playlist/PlaylistDetails";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -54,16 +58,19 @@ function App() {
                         return id ? <FavoriteDetails id={id} type={type} {...props} /> : <FavoritesPage {...props} />
                     }}/>
                     <Route path="/albums" exact={true} render={(props) => {
+                        let id = query.get("id");
                         setSelected('Albums');
-                        return <AlbumsPage {...props} />
+                        return id ? <AlbumDetails id={id} {...props} /> : <AlbumsPage {...props} />
                     }}/>
                     <Route path="/artists" exact={true} render={(props) => {
+                        let id = query.get("id");
                         setSelected('Artistes');
-                        return <ArtistsPage {...props} />
+                        return id ? <AuthorDetails id={id} {...props} /> : <ArtistsPage {...props} />
                     }}/>
                     <Route path="/playlists" exact={true} render={(props) => {
+                        let id = query.get("id");
                         setSelected('Playlists');
-                        return <PlaylistsPage {...props} />
+                        return id ? <PlaylistDetails id={id} {...props} /> : <PlaylistsPage {...props} />
                     }}/>
                 </Switch>
             </div>

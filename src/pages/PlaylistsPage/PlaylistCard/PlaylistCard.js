@@ -36,7 +36,7 @@ const PlaylistCard = ({item}) => {
 
     return(
         <Card>
-            <CardActionArea className={classes.cardArea} href={`#`}>
+            <CardActionArea className={classes.cardArea} href={`/playlists?id=${item.id}`}>
                 <CardMedia
                     component="img"
                     alt={item.name}

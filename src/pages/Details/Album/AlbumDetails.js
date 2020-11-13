@@ -73,6 +73,11 @@ const useStyles = makeStyles(theme => ({
     list: {
         width: '100%',
     },
+    deleteButton: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+    },
 }));
 
 const AlbumDetails = () => {
@@ -107,6 +112,9 @@ const Album = () => {
     return(
         <>
             <div className={classes.header}>
+                <IconButton className={classes.deleteButton} aria-label="delete">
+                    <MoreVertIcon />
+                </IconButton>
                 <Avatar variant={'square'} className={classes.avatar} alt={album.name} src={album.image} />
                 <h2>{album.name}</h2>
                 {isFavorite
