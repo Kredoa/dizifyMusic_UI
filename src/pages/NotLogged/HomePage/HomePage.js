@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import FavorisList from "../../../components/FavoritesList/FavorisList";
 import { favoritesList } from "../../../assets/datas/Favorites/favoritesList";

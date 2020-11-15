@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -6,6 +6,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputBase from "@material-ui/core/InputBase";
 import {fade} from "@material-ui/core";
 import {BLACK, PRIMARY_COLOR} from "../../assets/theme/colors";
+import UserContext from "../../context/User/UserContext";
 
 const useStyles = makeStyles(theme => ({
     appBar: {
@@ -103,6 +104,8 @@ const useStyles = makeStyles(theme => ({
 const NavBar = () => {
 
     const classes = useStyles();
+    const userContext = useContext(UserContext);
+    const currentUser = userContext.user;
 
     return(
         <>
@@ -121,14 +124,26 @@ const NavBar = () => {
                             inputProps={{ 'aria-label': 'search' }}
                         />
                     </div>
-                    <ul className={classes.navList}>
-                        <li>
-                            <a className={classes.a} href={'#'}>Se connecter</a>
-                        </li>
-                        <li>
-                            <a className={classes.a} href={'#'}>S'inscrire</a>
-                        </li>
-                    </ul>
+
+                        { currentUser
+                            ? (
+                                <ul className={classes.navList}>
+                                    <li>
+                                        <a className={classes.a} href={'#'}>Déconnexion</a>
+                                    </li>
+                                </ul>
+                            )
+                            : (
+                                <ul className={classes.navList}>
+                                    <li>
+                                        <a className={classes.a} href={'#'}>Se connecter</a>
+                                    </li>
+                                    <li>
+                                        <a className={classes.a} href={'#'}>S'inscrire</a>
+                                    </li>
+                                </ul>
+                            )
+                        }
                 </Toolbar>
             </AppBar>
         </>

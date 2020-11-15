@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import {createMuiTheme, makeStyles} from "@material-ui/core/styles";
@@ -9,6 +9,10 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import {BASE_URL_API} from "../../../assets/config/config";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import AuthorTitleCard from "./components/Title/AuthorTitleCard";
+import UserContext from "../../../context/User/UserContext";
+import TitleContext from "../../../context/Title/TitleContext";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -130,6 +134,11 @@ const AuthorDetails = ({id}) => {
 
 const Artist = ({artist}) => {
     const classes = useStyles();
+    const userContext = useContext(UserContext);
+    const titleContext = useContext(TitleContext);
+    const currentUser = userContext.user;
+    const [nbFollowers, setFollowers] = useState(getRandomFollowers(1000000, 3000000));
+    const [anchorEl, setAnchorEl] = useState(null);
     const isFavorite = false;
     const titlesNotInAlbum = artist.titles.filter(t => !t.album);
 
@@ -140,28 +149,70 @@ const Artist = ({artist}) => {
         return res.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }
 
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const setRunningTitle = (e, object) => {
+        e.preventDefault();
+        titleContext.setTitle(object);
+    };
+
+    const randomPlay = (e) => {
+        e.preventDefault();
+        const random = Math.floor(Math.random() * artist.titles.length);
+        setRunningTitle(e, artist.titles[random]);
+    };
+
     return(
         <>
             <div className={classes.header}>
-                <IconButton className={classes.deleteButton} aria-label="delete">
-                    <MoreVertIcon />
-                </IconButton>
+                { currentUser && (
+                    <>
+                        <IconButton className={classes.deleteButton} aria-label="delete" onClick={handleClick}>
+                            <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                            id="simple-menu"
+                            anchorEl={anchorEl}
+                            keepMounted
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                        >
+                            <MenuItem onClick={handleClose}>Ajouter à ma playlist</MenuItem>
+                            <MenuItem onClick={handleClose}>Supprimer cet album</MenuItem>
+                        </Menu>
+                    </>
+                )}
                 <Avatar className={classes.avatar} alt={artist.name} src={"https://i.pravatar.cc/200"} />
                 <h2>{artist.name}</h2>
-                {isFavorite
-                    ? <Button variant={"contained"} color={"primary"} className={classes.favAdd}>
-                        Retirer des favoris
-                    </Button>
-                    : <Button variant={"outlined"} className={classes.favAdd}>
-                        Ajouter aux favoris
-                    </Button>
-                }
-                <span>{getRandomFollowers(1000000, 3000000)} Auditeurs par mois</span>
                 {
-                    artist.titles.length > 0 && (
-                        <Button variant={"contained"} className={classes.playButton} color={"primary"}>Lecture aléatoire</Button>
-                    )
+                    currentUser
+                        ? (
+                            isFavorite
+                                ? (
+                                    <Button variant={"contained"} color={"primary"} className={classes.favAdd}>
+                                        Retirer des favoris
+                                    </Button>
+                                )
+                                : (
+                                    <Button variant={"outlined"} className={classes.favAdd}>
+                                        Ajouter aux favoris
+                                    </Button>
+                                )
+                        )
+                        : (
+                            <Button variant={"outlined"} className={classes.favAdd} disabled={true}>
+                                Ajouter aux favoris
+                            </Button>
+                        )
                 }
+                <span>{nbFollowers} Auditeurs par mois</span>
+                <Button variant={"contained"} className={classes.playButton} color={"primary"} onClick={(e) => randomPlay(e)} disabled={!(artist.titles.length > 0)}>Lecture aléatoire</Button>
             </div>
             <div className={classes.body}>
                 <div className={classes.content}>

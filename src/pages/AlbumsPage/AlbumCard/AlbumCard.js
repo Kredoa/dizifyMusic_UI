@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import PropTypes from "prop-types";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import AddIcon from '@material-ui/icons/Add';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import {USER_ROLE_COLOR} from "../../../assets/theme/colors";
+import UserContext from "../../../context/User/UserContext";
 
 
 const useStyles = makeStyles(theme => ({
@@ -37,6 +38,8 @@ const useStyles = makeStyles(theme => ({
 
 const AlbumCard = ({item}) => {
     const classes = useStyles();
+    const userContext = useContext(UserContext);
+    const currentUser = userContext.user;
 
     const [isFav, setFav] = useState(false);
 
@@ -56,15 +59,18 @@ const AlbumCard = ({item}) => {
                     <span>{new Date(item.publicationDate).getFullYear()+" · "+item.titles.length+" titre(s)"}</span>
                 </CardContent>
             </CardActionArea>
-            {/* A cacher si user not connected*/}
-            <CardActions className={classes.cardActions}>
-                <IconButton aria-label="add to favorites">
-                    { isFav ? <FavoriteIcon color={"error"}/> : <FavoriteBorderIcon />}
-                </IconButton>
-                <IconButton aria-label="add-to-playlist">
-                    <AddIcon />
-                </IconButton>
-            </CardActions>
+            {
+                currentUser && (
+                    <CardActions className={classes.cardActions}>
+                        <IconButton aria-label="add to favorites">
+                            { isFav ? <FavoriteIcon color={"error"}/> : <FavoriteBorderIcon />}
+                        </IconButton>
+                        <IconButton aria-label="add-to-playlist">
+                            <AddIcon />
+                        </IconButton>
+                    </CardActions>
+                )
+            }
         </Card>
     );
 };

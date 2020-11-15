@@ -116,6 +116,7 @@ const SideMenu = ({menu, selected}) => {
 
     const [playerRunning, setPlayerRunning] = useState(true);
     const title = context.title;
+    const currentUser = userContext.user;
 
     const isDisabled = (item) => {
         if(item.label === 'Favoris' || item.label === 'Playlists') {
@@ -144,24 +145,42 @@ const SideMenu = ({menu, selected}) => {
         <>
             <div className={classes.menuDiv}>
                 <div className={classes.profile}>
-                    <Badge
-                        className={classes.badge}
-                        overlap="circle"
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                        badgeContent={
-                            <IconButton aria-label="changer la photo" size={'small'}>
-                                <AddIcon className={classes.badgeIcon}/>
-                            </IconButton>
-                        }
-                    >
-                        <Avatar alt="Travis Howard" src={"https://i.pravatar.cc/200"} />
-                    </Badge>
+                    {
+                        currentUser
+                            ? (
+                                <Badge
+                                    className={classes.badge}
+                                    overlap="circle"
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                    badgeContent={
+                                        <IconButton aria-label="changer la photo" size={'small'}>
+                                            <AddIcon className={classes.badgeIcon}/>
+                                        </IconButton>
+                                    }
+                                >
+                                    {
+                                        currentUser.image
+                                            ? <Avatar alt="Travis Howard" src={currentUser.image} />
+                                            : <Avatar alt="Invité">{currentUser.username.charAt(0)}</Avatar>
+                                    }
+                                </Badge>
+                            )
+                            : (
+                                <Avatar alt="Invité">I</Avatar>
+                            )
+                    }
                     <div className={classes.profileInfo}>
-                        <h3>Guest Name</h3>
-                        <span>Utilisateur</span>
+                        { currentUser
+                            ? <h3>{currentUser.username}</h3>
+                            : <h3>Invité</h3>
+                        }
+                        { currentUser
+                            ? <span>{currentUser.role}</span>
+                            : <span>Visiteur</span>
+                        }
                     </div>
                 </div>
                 <Divider />

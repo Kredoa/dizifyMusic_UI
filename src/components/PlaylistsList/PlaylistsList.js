@@ -11,6 +11,11 @@ const useStyles = makeStyles(theme => ({
         marginBottom: '20px',
         position: 'relative',
     },
+    playlistsDivLoggedOut:{
+        marginBottom: '20px',
+        position: 'relative',
+        height: '250px',
+    },
     title: {
         '&>a': {
             display: 'flex',
@@ -56,7 +61,7 @@ const PlaylistList = ({playlists}) => {
     const userContext = useContext(UserContext);
 
     return(
-        <div className={classes.playlistsDiv}>
+        <div className={userContext.user ? classes.playlistsDiv : classes.playlistsDivLoggedOut}>
             <div className={classes.title}>
                 <a href={"/playlists"}>
                     <h2>
@@ -65,16 +70,20 @@ const PlaylistList = ({playlists}) => {
                     <ChevronRightIcon />
                 </a>
             </div>
-            <div className={classes.list}>
-                {playlists.map((fav, index) =>
-                    <PlaylistItem item={fav} key={index}/>
-                )}
-            </div>
-            { !userContext.user && (
-                <div className={classes.hover}>
-                    <p>Vous devez être connectés pour accéder aux playlists.</p>
-                </div>
-            )}
+            { !userContext.user
+                ? (
+                    <div className={classes.hover}>
+                        <p>Vous devez être connectés pour accéder aux playlists.</p>
+                    </div>
+                )
+                : (
+                    <div className={classes.list}>
+                        {playlists.map((fav, index) =>
+                            <PlaylistItem item={fav} key={index}/>
+                        )}
+                    </div>
+                )
+            }
         </div>
     );
 };

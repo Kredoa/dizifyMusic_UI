@@ -4,7 +4,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
-import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../../../../assets/datas/Types/entities";
+import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../../../../assets/config/Types/entities";
 import {makeStyles} from "@material-ui/core/styles";
 import {USER_ROLE_COLOR} from "../../../../assets/theme/colors";
 import CardActions from "@material-ui/core/CardActions";

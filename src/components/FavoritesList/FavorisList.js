@@ -11,6 +11,11 @@ const useStyles = makeStyles(theme => ({
         marginBottom: '20px',
         position: 'relative',
     },
+    favoritesDivLoggedOut:{
+        marginBottom: '20px',
+        position: 'relative',
+        height: '250px',
+    },
     title: {
         '&>a': {
             display: 'flex',
@@ -56,7 +61,7 @@ const FavorisList = ({favorites}) => {
     const userContext = useContext(UserContext);
 
     return(
-        <div className={classes.favoritesDiv}>
+        <div className={userContext.user ? classes.favoritesDiv : classes.favoritesDivLoggedOut}>
             <div className={classes.title}>
                 <a href={"/favorites"}>
                     <h2>
@@ -65,16 +70,20 @@ const FavorisList = ({favorites}) => {
                     <ChevronRightIcon />
                 </a>
             </div>
-            <div className={classes.list}>
-                {favorites.map((fav, index) =>
-                    <FavorisItem item={fav} key={index}/>
-                )}
-            </div>
-            { !userContext.user && (
-                <div className={classes.hover}>
-                    <p>Vous devez être connectés pour accéder aux favoris.</p>
-                </div>
-            )}
+            { !userContext.user
+                ? (
+                    <div className={classes.hover}>
+                        <p>Vous devez être connectés pour accéder aux favoris.</p>
+                    </div>
+                )
+                : (
+                    <div className={classes.list}>
+                        {favorites.map((fav, index) =>
+                            <FavorisItem item={fav} key={index}/>
+                        )}
+                    </div>
+                )
+            }
         </div>
     );
 };
