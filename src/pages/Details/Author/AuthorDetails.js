@@ -1,13 +1,14 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
-import {author} from "../../../assets/datas/Authors/author";
 import Button from "@material-ui/core/Button";
 import {createMuiTheme, makeStyles} from "@material-ui/core/styles";
 import {ThemeProvider} from "@material-ui/styles";
-import {artistAlbums} from "../../../assets/datas/Authors/ArtistDetails/artistAlbums";
 import AuthorAlbumCard from "./components/Album/AuthorAlbumCard";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import {BASE_URL_API} from "../../../assets/config/config";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import AuthorTitleCard from "./components/Title/AuthorTitleCard";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -81,27 +82,56 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const AuthorDetails = () => {
+const useStyleParent = makeStyles(theme => ({
+    loading: {
+        height: '100vh',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
+}));
+
+const getArtist = async (id) => {
+    const res = await fetch(`${BASE_URL_API}artists/${id}`);
+    return await res.json();
+};
+
+const AuthorDetails = ({id}) => {
+
+    const [artist, setArtist] = useState();
+    const classesParent = useStyleParent();
+
+    useEffect(() => {
+        getArtist(id).then(res => setArtist(res))
+    }, [setArtist, id]);
 
     const theme = createMuiTheme({
         image: {
-            url: author.image,
+            url: artist ? artist.image : "https://i.pravatar.cc/200",
         }
     });
 
     return (
         <>
             <ThemeProvider theme={theme}>
-                <Artist/>
+                {artist
+                    ? <Artist artist={artist}/>
+                    : (
+                        <div className={classesParent.loading}>
+                            <CircularProgress />
+                        </div>
+                    )
+                }
             </ThemeProvider>
         </>
     );
 };
 
-const Artist = () => {
+const Artist = ({artist}) => {
     const classes = useStyles();
-
     const isFavorite = false;
+    const titlesNotInAlbum = artist.titles.filter(t => !t.album);
 
     function getRandomFollowers(min, max) {
         let valMin = Math.ceil(min);
@@ -116,8 +146,8 @@ const Artist = () => {
                 <IconButton className={classes.deleteButton} aria-label="delete">
                     <MoreVertIcon />
                 </IconButton>
-                <Avatar className={classes.avatar} alt={author.name} src={"https://i.pravatar.cc/200"} />
-                <h2>{author.name}</h2>
+                <Avatar className={classes.avatar} alt={artist.name} src={"https://i.pravatar.cc/200"} />
+                <h2>{artist.name}</h2>
                 {isFavorite
                     ? <Button variant={"contained"} color={"primary"} className={classes.favAdd}>
                         Retirer des favoris
@@ -127,31 +157,56 @@ const Artist = () => {
                     </Button>
                 }
                 <span>{getRandomFollowers(1000000, 3000000)} Auditeurs par mois</span>
-                <Button variant={"contained"} className={classes.playButton} color={"primary"}>Lecture aléatoire</Button>
+                {
+                    artist.titles.length > 0 && (
+                        <Button variant={"contained"} className={classes.playButton} color={"primary"}>Lecture aléatoire</Button>
+                    )
+                }
             </div>
             <div className={classes.body}>
                 <div className={classes.content}>
                     <h2>Description</h2>
-                    {author.description
-                        ? <p>{author.description}</p>
+                    {artist.description
+                        ? <p>{artist.description}</p>
                         : <p>Aucune description disponible.</p>
                     }
                 </div>
                 <div className={classes.content}>
                     <h2>Albums</h2>
-                    <div className={classes.list}>
-                        {artistAlbums.map((item, index) => (
-                            <AuthorAlbumCard id={item.id} item={item} />
-                        ))}
-                    </div>
+                    {
+                        artist.albums.length > 0
+                            ? (
+                                <div className={classes.list}>
+                                    {artist.albums.map((item, index) => (
+                                        <AuthorAlbumCard id={item.id} key={index}/>
+                                    ))}
+                                </div>
+                            )
+                            : (
+                                <p>Aucune données.</p>
+                            )
+                    }
+
                 </div>
-                <div>
+                <div className={classes.content}>
                     <h2>Autre(s) titre(s)</h2>
-                    <div></div>
+                    {
+                        titlesNotInAlbum.length > 0
+                            ? (
+                                <div className={classes.list}>
+                                    {titlesNotInAlbum.map((item, index) => (
+                                        <AuthorTitleCard title={item} key={index}/>
+                                    ))}
+                                </div>
+                            )
+                            : (
+                                <p>Aucune données.</p>
+                            )
+                    }
                 </div>
             </div>
         </>
     )
-}
+};
 
 export default AuthorDetails;

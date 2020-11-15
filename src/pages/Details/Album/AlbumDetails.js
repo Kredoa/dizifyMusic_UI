@@ -1,9 +1,8 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import {createMuiTheme, makeStyles} from "@material-ui/core/styles";
 import {ThemeProvider} from "@material-ui/styles";
-import {album} from "../../../assets/datas/Albums/album";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -13,6 +12,8 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PropTypes from "prop-types";
+import {BASE_URL_API} from "../../../assets/config/config";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -79,26 +80,59 @@ const useStyles = makeStyles(theme => ({
         top: 0,
         right: 0,
     },
+    artistLink: {
+        textDecoration: 'none',
+    }
 }));
+
+const useStyleParent = makeStyles(theme => ({
+    loading: {
+        height: '100vh',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
+}));
+
+const getAlbum = async (id) => {
+    const res = await fetch(`${BASE_URL_API}albums/${id}`);
+    return await res.json();
+};
 
 const AlbumDetails = ({id}) => {
 
+    const [album, setAlbum] = useState();
+
+    useEffect(() => {
+        getAlbum(id).then(res => setAlbum(res))
+    }, [setAlbum, id]);
+
+    const classesParent = useStyleParent();
+
     const theme = createMuiTheme({
         image: {
-            url: album.image,
+            url: album ? album.image : "https://picsum.photos/200",
         }
     });
 
     return (
         <>
             <ThemeProvider theme={theme}>
-                <Album id={id}/>
+                {album
+                    ? <Album album={album}/>
+                    : (
+                        <div className={classesParent.loading}>
+                            <CircularProgress />
+                        </div>
+                    )
+                }
             </ThemeProvider>
         </>
     );
 };
 
-const Album = () => {
+const Album = ({album}) => {
     const classes = useStyles();
 
     const isFavorite = false;
@@ -127,7 +161,7 @@ const Album = () => {
                     </Button>
                 }
                 <span>{getRandomListening(1000000, 3000000)} écoutes</span>
-                <span>Album de {album.author.name} · {new Date(album.publicationDate).getFullYear()}</span>
+                <span>Album de <a className={classes.artistLink} href={`/artists?id=${album.author.id}`}>{album.author.name}</a> · {new Date(album.publicationDate).getFullYear()}</span>
                 <Button variant={"contained"} className={classes.playButton} color={"primary"}>Lecture aléatoire</Button>
             </div>
             <div className={classes.body}>
@@ -136,7 +170,7 @@ const Album = () => {
                     <List className={classes.list}>
                         {
                             album.titles.map((title, index) => (
-                                <ListItem button>
+                                <ListItem button key={index}>
                                     <ListItemAvatar>
                                         {
                                             title.image
@@ -146,7 +180,7 @@ const Album = () => {
                                                 </Avatar>
                                         }
                                     </ListItemAvatar>
-                                    <ListItemText primary={title.name} secondary={title.author.name+" · "+title.duration} />
+                                    <ListItemText primary={title.name} secondary={album.author.name+" · "+title.duration} />
                                     <ListItemSecondaryAction>
                                         <IconButton edge="end" aria-label="delete">
                                             <MoreVertIcon />
@@ -160,7 +194,7 @@ const Album = () => {
             </div>
         </>
     )
-}
+};
 
 AlbumDetails.propTypes = {
     id: PropTypes.string.isRequired,

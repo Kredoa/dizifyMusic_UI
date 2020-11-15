@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import AlbumCard from "./AlbumCard/AlbumCard";
-import {albumlist} from "../../assets/datas/Albums/albums";
+import {BASE_URL_API} from "../../assets/config/config";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(theme => ({
     body: {
@@ -12,20 +13,50 @@ const useStyles = makeStyles(theme => ({
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 395px))',
         gridGap: '1rem',
+    },
+    loading: {
+        height: '30rem',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 }));
+
+const getAlbums = async () => {
+    const res = await fetch(`${BASE_URL_API}albums`);
+    return await res.json();
+};
+
 const AlbumsPage = () => {
-    const classes = useStyles()
+    const classes = useStyles();
+    const [albums, setAlbums] = useState();
+
+    useEffect(() => {
+        getAlbums().then(res => {
+            setAlbums(res);
+        });
+    }, [setAlbums]);
+
     return(
         <div className={classes.body}>
             <h1>Albums</h1>
-            <div className={classes.AlbumTab}>
-                {albumlist.map((item, index) =>
-                    <AlbumCard item={item} key={index}/>
-                )}
-            </div>
+            { albums
+                ? (
+                    <div className={classes.AlbumTab}>
+                        {albums.map((item, index) =>
+                            <AlbumCard item={item} key={index}/>
+                        )}
+                    </div>
+                )
+                : (
+                    <div className={classes.loading}>
+                        <CircularProgress />
+                    </div>
+                )
+            }
         </div>
     )
-}
+};
 
 export default AlbumsPage;

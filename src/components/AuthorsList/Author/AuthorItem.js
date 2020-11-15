@@ -32,12 +32,6 @@ const useStyles = makeStyles(theme => ({
 const AuthorItem = ({item}) => {
     const classes = useStyles();
 
-    const getNbTitres = (item) => {
-        const array =Array.from({length:20},(v,k)=>k*1);
-        const nb = array[Math.floor(Math.random()*array.length)];
-        return nb;
-    }
-
     return(
         <Card>
             <CardActionArea className={classes.cardArea} href={`/artists?id=${item.id}`}>
@@ -49,7 +43,7 @@ const AuthorItem = ({item}) => {
                 />
                 <CardContent className={classes.cardContent}>
                     <h2>{item.name}</h2>
-                    <span>{getNbTitres(item)} album(s)</span>
+                    <span>{item.albums.length} album(s)</span>
                 </CardContent>
             </CardActionArea>
         </Card>

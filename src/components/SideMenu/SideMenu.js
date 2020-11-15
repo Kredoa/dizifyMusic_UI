@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
     PLAYER_BACKGROUND_COLOR,
@@ -22,6 +22,8 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import PauseIcon from '@material-ui/icons/Pause';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import CloseIcon from '@material-ui/icons/Close';
+import TitleContext from "../../context/Title/TitleContext";
+import UserContext from "../../context/User/UserContext";
 
 const useStyles = makeStyles((theme) =>({
     menuDiv: {
@@ -109,9 +111,18 @@ const useStyles = makeStyles((theme) =>({
 
 const SideMenu = ({menu, selected}) => {
     const classes = useStyles();
+    const context = useContext(TitleContext);
+    const userContext = useContext(UserContext);
 
-    const [playerRunning, setPlayerRunning] = useState(false);
-    const [player, setPlayer] = useState(false);
+    const [playerRunning, setPlayerRunning] = useState(true);
+    const title = context.title;
+
+    const isDisabled = (item) => {
+        if(item.label === 'Favoris' || item.label === 'Playlists') {
+            return !userContext.user;
+        }
+        return false;
+    };
 
     const ListItemLink = (props) => {
         return(
@@ -122,6 +133,11 @@ const SideMenu = ({menu, selected}) => {
     const handlePlayerclick = (e) => {
         e.preventDefault();
         setPlayerRunning(!playerRunning);
+    };
+
+    const closePlayer = () => {
+        context.setTitle(null);
+        setPlayerRunning(true);
     };
 
     return(
@@ -151,38 +167,42 @@ const SideMenu = ({menu, selected}) => {
                 <Divider />
                 <List className={classes.list}>
                     {menu.map((item, index) => (
-                        <ListItemLink key={index} href={item.linkTo} selected={selected === item.label}>
+                        <ListItemLink key={index} href={item.linkTo} selected={selected === item.label} disabled={isDisabled(item)} >
                             <ListItemIcon>{item.icon}</ListItemIcon>
                             <ListItemText>{item.label}</ListItemText>
                         </ListItemLink>
                     ))}
                 </List>
-                <div className={player ? classes.player : classes.displayNone}>
-                    <div className={classes.image}>
-                        <img src="https://i.pravatar.cc/200" alt=""/>
-                        <IconButton aria-label="close" className={classes.close} >
-                            <CloseIcon/>
-                        </IconButton>
-                    </div>
-                    <div className={classes.title}>
-                        <h3>Cabeza</h3>
-                        <span>OBOY</span>
-                    </div>
-                    <div>
-                        <IconButton aria-label="previous">
-                            <SkipPreviousIcon />
-                        </IconButton>
-                        <IconButton aria-label="play/pause">
-                            {playerRunning
-                                ? <PauseIcon fontSize={"large"} onClick={handlePlayerclick}/>
-                                : <PlayArrowIcon fontSize={"large"} onClick={handlePlayerclick}/>
-                            }
-                        </IconButton>
-                        <IconButton aria-label="next">
-                            <SkipNextIcon />
-                        </IconButton>
-                    </div>
-                </div>
+                {
+                    title && (
+                        <div className={classes.player}>
+                            <div className={classes.image}>
+                                <img src="https://i.pravatar.cc/200" alt=""/>
+                                <IconButton aria-label="close" className={classes.close} onClick={closePlayer} >
+                                    <CloseIcon/>
+                                </IconButton>
+                            </div>
+                            <div className={classes.title}>
+                                <h3>{title.name}</h3>
+                                <span>{title.duration}</span>
+                            </div>
+                            <div>
+                                <IconButton aria-label="previous">
+                                    <SkipPreviousIcon />
+                                </IconButton>
+                                <IconButton aria-label="play/pause">
+                                    {playerRunning
+                                        ? <PauseIcon fontSize={"large"} onClick={handlePlayerclick}/>
+                                        : <PlayArrowIcon fontSize={"large"} onClick={handlePlayerclick}/>
+                                    }
+                                </IconButton>
+                                <IconButton aria-label="next">
+                                    <SkipNextIcon />
+                                </IconButton>
+                            </div>
+                        </div>
+                    )
+                }
             </div>
         </>
     )

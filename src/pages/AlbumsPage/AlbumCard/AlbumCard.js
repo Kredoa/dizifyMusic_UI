@@ -56,6 +56,7 @@ const AlbumCard = ({item}) => {
                     <span>{new Date(item.publicationDate).getFullYear()+" · "+item.titles.length+" titre(s)"}</span>
                 </CardContent>
             </CardActionArea>
+            {/* A cacher si user not connected*/}
             <CardActions className={classes.cardActions}>
                 <IconButton aria-label="add to favorites">
                     { isFav ? <FavoriteIcon color={"error"}/> : <FavoriteBorderIcon />}
@@ -66,7 +67,7 @@ const AlbumCard = ({item}) => {
             </CardActions>
         </Card>
     );
-}
+};
 
 AlbumCard.propTypes = {
     item: PropTypes.object.isRequired,

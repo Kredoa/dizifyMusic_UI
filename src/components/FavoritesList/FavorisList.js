@@ -1,13 +1,15 @@
-import React from "react";
+import React, {useContext} from "react";
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import {makeStyles} from "@material-ui/core/styles";
-import {BLACK} from "../../assets/theme/colors";
+import {BLACK, HOVER_UNLOGGED_COLOR} from "../../assets/theme/colors";
 import FavorisItem from "./Favorite/FavorisItem";
 import PropTypes from 'prop-types';
+import UserContext from "../../context/User/UserContext";
 
 const useStyles = makeStyles(theme => ({
     favoritesDiv:{
         marginBottom: '20px',
+        position: 'relative',
     },
     title: {
         '&>a': {
@@ -30,11 +32,28 @@ const useStyles = makeStyles(theme => ({
         gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
         gridGap: '1rem',
     },
-}))
+    hover: {
+        backgroundColor: HOVER_UNLOGGED_COLOR,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '260px',
+        zIndex: 10,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        '&>p': {
+            fontWeight: '500',
+            fontSize: '20px'
+        }
+    },
+}));
 
 const FavorisList = ({favorites}) => {
 
     const classes = useStyles();
+    const userContext = useContext(UserContext);
 
     return(
         <div className={classes.favoritesDiv}>
@@ -51,6 +70,11 @@ const FavorisList = ({favorites}) => {
                     <FavorisItem item={fav} key={index}/>
                 )}
             </div>
+            { !userContext.user && (
+                <div className={classes.hover}>
+                    <p>Vous devez être connectés pour accéder aux favoris.</p>
+                </div>
+            )}
         </div>
     );
 };
