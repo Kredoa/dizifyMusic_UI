@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -7,6 +7,7 @@ import InputBase from "@material-ui/core/InputBase";
 import {fade} from "@material-ui/core";
 import {BLACK, PRIMARY_COLOR} from "../../assets/theme/colors";
 import UserContext from "../../context/User/UserContext";
+import ConnectionModal from "../Modals/ConnectionModal/ConnectionModal";
 
 const useStyles = makeStyles(theme => ({
     appBar: {
@@ -106,6 +107,18 @@ const NavBar = () => {
     const classes = useStyles();
     const userContext = useContext(UserContext);
     const currentUser = userContext.user;
+    const [open, setOpen] = useState(false);
+    const [signIn, setSignin] = useState(false);
+
+    const handleShow = (s) => {
+        setOpen(true);
+        setSignin(s);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setSignin(false);
+    };
 
     return(
         <>
@@ -135,10 +148,10 @@ const NavBar = () => {
                             )
                             : (
                                 <ul className={classes.navList}>
-                                    <li>
+                                    <li onClick={() => handleShow(false)}>
                                         <a className={classes.a} href={'#'}>Se connecter</a>
                                     </li>
-                                    <li>
+                                    <li onClick={() => handleShow(true)}>
                                         <a className={classes.a} href={'#'}>S'inscrire</a>
                                     </li>
                                 </ul>
@@ -146,6 +159,7 @@ const NavBar = () => {
                         }
                 </Toolbar>
             </AppBar>
+            <ConnectionModal open={open} handleClose={handleClose} signIn={signIn}/>
         </>
     );
 }
