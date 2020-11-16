@@ -64,7 +64,7 @@ const AuthorAlbumCard = ({id}) => {
 };
 
 AuthorAlbumCard.propTypes = {
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
 };
 
 export default AuthorAlbumCard;

@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: '20px',
         '&>p': {
             textAlign: 'justify',
-            maxWidth: '50rem',
+            maxWidth: '655px',
         }
     },
     list: {
