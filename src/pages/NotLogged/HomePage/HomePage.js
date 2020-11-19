@@ -18,8 +18,8 @@ const HomePage = () => {
 
     return(
         <div className={classes.body}>
-            <FavorisList favorites={favoritesList} />
-            <PlaylistList playlists={playlists}/>
+            <FavorisList />
+            <PlaylistList />
             <AlbumsList />
             <AuthorsList />
         </div>

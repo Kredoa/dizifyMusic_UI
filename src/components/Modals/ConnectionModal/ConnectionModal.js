@@ -1,9 +1,13 @@
-import React from "react";
+import React, {useContext, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import {BACKGROUND_COLOR} from "../../../assets/theme/colors";
+import {BACKGROUND_COLOR, ERROR_COLOR} from "../../../assets/theme/colors";
+import {BASE_URL_API} from "../../../assets/config/config";
+import axios from "axios";
+import UserContext from "../../../context/User/UserContext";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     modalBackground: {
@@ -24,43 +28,96 @@ const useStyles = makeStyles(theme => ({
     },
     fields: {
         margin: '10px 0',
+        width: '100%',
     },
     submit: {
         marginTop: '15px',
+    },
+    error: {
+        color: ERROR_COLOR,
     }
 }));
 
-const LogInBody = () => {
+const LogInBody = ({handleClose}) => {
     const classes = useStyles();
+    const [error, setError] = useState();
+    const userContext = useContext(UserContext);
+
+    const connectUser = (username, pwd) => {
+        const body = {
+            username: username,
+            password: pwd
+        }
+        axios
+          .post(`${BASE_URL_API}auth/signin`, body)
+          .then(res => {
+              userContext.setUser(res.data)
+              handleClose()
+              return <Redirect to='/'  />
+          })
+          .catch(error => setError('Identifiants Invalides'))
+    }
+
+    const handleLogIn = (event) => {
+        const un = event.target.username.value;
+        const pd = event.target.password.value;
+        connectUser(un, pd);
+    };
+
     return(
         <div className={classes.modal}>
             <h1>Connectez-vous</h1>
-            <form className={classes.form} noValidate autoComplete="off">
+            <form className={classes.form} autoComplete="off" onSubmit={handleLogIn}>
                 <TextField
                     className={classes.fields}
-                    type="email"
-                    id="email"
-                    label="Adresse e-mail" />
+                    id="username"
+                    label="Nom d'utilisateur" />
                 <TextField
                     className={classes.fields}
-                    id="pwd"
+                    id="password"
                     label="Mot de passe"
                     type="password"
                     autoComplete="current-password"
                 />
-                <Button className={classes.submit} variant={"contained"} color={"primary"} >Confirmer</Button>
-                {/*<Button className={classes.submit} variant={"contained"} type={"submit"} color={"primary"} >Confirmer</Button>*/}
+                { error && <span className={classes.error}>{error}</span>}
+                <Button className={classes.submit} type={'submit'} variant={"contained"} color={"primary"} >Confirmer</Button>
             </form>
         </div>
     )
 };
 
-const SignInBody = () => {
+const SignUpBody = ({handleClose}) => {
     const classes = useStyles();
+    const [error, setError] = useState();
+    const userContext = useContext(UserContext);
+
+    const signUser = (email, username, pwd) => {
+        const body = {
+            email: email,
+            password: pwd,
+            username: username,
+        }
+        axios
+          .post(`${BASE_URL_API}auth/signup`, body)
+          .then(res => {
+              userContext.setUser(res.data)
+              handleClose()
+              return <Redirect to='/'  />
+          })
+          .catch(error => setError('Inscription impossible, merci de réessayer ultérieurement'))
+    }
+
+    const handleSignUp = (event) => {
+        const un = event.target.username.value;
+        const pd = event.target.password.value;
+        const email = event.target.email.value;
+        signUser(email, un, pd);
+    };
+
     return(
         <div className={classes.modal}>
             <h1>Inscrivez-vous</h1>
-            <form className={classes.form} noValidate autoComplete="off">
+            <form className={classes.form} autoComplete="off" onSubmit={handleSignUp}>
                 <TextField
                     className={classes.fields}
                     type="email"
@@ -72,13 +129,14 @@ const SignInBody = () => {
                     label="Pseudo" />
                 <TextField
                     className={classes.fields}
-                    id="pwd"
+                    id="password"
                     label="Mot de passe"
                     type="password"
                     autoComplete="current-password"
                 />
-                <Button className={classes.submit} variant={"contained"} color={"primary"} >Confirmer</Button>
-                {/*<Button className={classes.submit} variant={"contained"} type={"submit"} color={"primary"} >Confirmer</Button>*/}
+                { error && <span className={classes.error}>{error}</span>}
+                {/*<Button className={classes.submit} variant={"contained"} color={"primary"} >Confirmer</Button>*/}
+                <Button className={classes.submit} variant={"contained"} type={"submit"} color={"primary"} >Confirmer</Button>
             </form>
         </div>
     )
@@ -94,7 +152,7 @@ const ConnectionModal = ({open, handleClose, signIn}) => {
             aria-labelledby={signIn ? "Modal inscription" : "Modal connexion"}
             aria-describedby={signIn ? "Inscription de l'utilisateur" : "Modal connexion"}
         >
-            {signIn ? <SignInBody/> : <LogInBody/>}
+            {signIn ? <SignUpBody handleClose={handleClose}/> : <LogInBody handleClose={handleClose}/>}
         </Modal>
     );
 };

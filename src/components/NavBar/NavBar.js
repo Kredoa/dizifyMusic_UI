@@ -120,6 +120,10 @@ const NavBar = () => {
         setSignin(false);
     };
 
+    const handleLogOut = () => {
+        userContext.setUser(null);
+    }
+
     return(
         <>
             <AppBar position="static" className={classes.appBar}>
@@ -142,7 +146,7 @@ const NavBar = () => {
                             ? (
                                 <ul className={classes.navList}>
                                     <li>
-                                        <a className={classes.a} href={'#'}>Déconnexion</a>
+                                        <a className={classes.a} href={'#'} onClick={handleLogOut}>Déconnexion</a>
                                     </li>
                                 </ul>
                             )

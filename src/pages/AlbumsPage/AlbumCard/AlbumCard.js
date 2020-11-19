@@ -65,9 +65,6 @@ const AlbumCard = ({item}) => {
                         <IconButton aria-label="add to favorites">
                             { isFav ? <FavoriteIcon color={"error"}/> : <FavoriteBorderIcon />}
                         </IconButton>
-                        <IconButton aria-label="add-to-playlist">
-                            <AddIcon />
-                        </IconButton>
                     </CardActions>
                 )
             }

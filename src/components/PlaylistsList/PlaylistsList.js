@@ -1,10 +1,11 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {BLACK, HOVER_UNLOGGED_COLOR} from "../../assets/theme/colors";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import PropTypes from "prop-types";
 import PlaylistItem from "./Playlist/PlaylistItem";
 import UserContext from "../../context/User/UserContext";
+import axios from "axios";
+import {BASE_URL_API} from "../../assets/config/config";
 
 const useStyles = makeStyles(theme => ({
     playlistsDiv:{
@@ -32,8 +33,6 @@ const useStyles = makeStyles(theme => ({
     list: {
         padding: '5px 0',
         display: 'grid',
-        // gridTemplateAreas: '"card card card card card card card"',
-        // gridGap: '20px',
         gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
         gridGap: '1rem',
     },
@@ -55,10 +54,29 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const PlaylistList = ({playlists}) => {
+const getPlaylists = (token) => {
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+    };
+    return axios.get(`${BASE_URL_API}playlists`, { headers })
+};
+
+const PlaylistList = () => {
 
     const classes = useStyles();
     const userContext = useContext(UserContext);
+    const currentUser = userContext.user
+    const [playlists, setPlaylists] = useState([]);
+    console.log(currentUser)
+
+    useEffect(() => {
+        console.log("useEffect")
+        if(currentUser) {
+            console.log('getPlaylist')
+            getPlaylists(currentUser.token)
+              .then(res => console.log(res))
+        }
+    }, [currentUser, setPlaylists]);
 
     return(
         <div className={userContext.user ? classes.playlistsDiv : classes.playlistsDivLoggedOut}>
@@ -86,10 +104,6 @@ const PlaylistList = ({playlists}) => {
             }
         </div>
     );
-};
-
-PlaylistList.propTypes = {
-    playlists: PropTypes.array.isRequired,
 };
 
 export default PlaylistList;

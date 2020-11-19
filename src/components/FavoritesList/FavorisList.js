@@ -1,10 +1,12 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import {makeStyles} from "@material-ui/core/styles";
 import {BLACK, HOVER_UNLOGGED_COLOR} from "../../assets/theme/colors";
 import FavorisItem from "./Favorite/FavorisItem";
-import PropTypes from 'prop-types';
 import UserContext from "../../context/User/UserContext";
+import axios from "axios";
+import {BASE_URL_API} from "../../assets/config/config";
+import {favoritesList} from "../../assets/datas/Favorites/favoritesList";
 
 const useStyles = makeStyles(theme => ({
     favoritesDiv:{
@@ -32,8 +34,6 @@ const useStyles = makeStyles(theme => ({
     list: {
         padding: '5px 0',
         display: 'grid',
-        // gridTemplateAreas: '"card card card card card card card"',
-        // gridGap: '20px',
         gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
         gridGap: '1rem',
     },
@@ -55,10 +55,23 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const FavorisList = ({favorites}) => {
+const getAllFavorites = (token) => {
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+    };
+    return axios.get(`${BASE_URL_API}all-favorites`, { headers })
+};
+
+const FavorisList = () => {
 
     const classes = useStyles();
     const userContext = useContext(UserContext);
+    // const [favorites, setFavorites] = useState();
+
+    // useEffect(() => {
+    //     getAllFavorites(userContext.user.token)
+    //       .then(res => console.log(res))
+    // }, [setFavorites]);
 
     return(
         <div className={userContext.user ? classes.favoritesDiv : classes.favoritesDivLoggedOut}>
@@ -78,7 +91,7 @@ const FavorisList = ({favorites}) => {
                 )
                 : (
                     <div className={classes.list}>
-                        {favorites.map((fav, index) =>
+                        {favoritesList.map((fav, index) =>
                             <FavorisItem item={fav} key={index}/>
                         )}
                     </div>
@@ -86,10 +99,6 @@ const FavorisList = ({favorites}) => {
             }
         </div>
     );
-};
-
-FavorisList.propTypes = {
-    favorites: PropTypes.array.isRequired,
 };
 
 export default FavorisList;

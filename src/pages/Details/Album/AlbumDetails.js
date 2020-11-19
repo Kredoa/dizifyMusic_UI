@@ -195,7 +195,6 @@ const Album = ({album}) => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={handleClose}>Ajouter à ma playlist</MenuItem>
                             <MenuItem onClick={handleClose}>Supprimer cet album</MenuItem>
                         </Menu>
                     </>
