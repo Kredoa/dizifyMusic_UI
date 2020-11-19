@@ -25,7 +25,7 @@ const PlaylistItem = ({item}) => {
 
     return(
         <Card className={classes.card}>
-            <CardActionArea >
+            <CardActionArea href={`/playlists?id=${item.id}`}>
                 <CardMedia
                     component="img"
                     alt={item.name}
@@ -33,7 +33,7 @@ const PlaylistItem = ({item}) => {
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
-                    <h2>{item.name}</h2>
+                    <h3>{item.name}</h3>
                     <span>{item.titles.length} titre(s)</span>
                 </CardContent>
             </CardActionArea>

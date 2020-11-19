@@ -52,6 +52,13 @@ const useStyles = makeStyles(theme => ({
             fontSize: '20px'
         }
     },
+    emptyList: {
+        width: '100%',
+        height: '260px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 }));
 
 const getPlaylists = (token) => {
@@ -67,14 +74,11 @@ const PlaylistList = () => {
     const userContext = useContext(UserContext);
     const currentUser = userContext.user
     const [playlists, setPlaylists] = useState([]);
-    console.log(currentUser)
 
     useEffect(() => {
-        console.log("useEffect")
         if(currentUser) {
-            console.log('getPlaylist')
             getPlaylists(currentUser.token)
-              .then(res => console.log(res))
+              .then(res => setPlaylists(res.data))
         }
     }, [currentUser, setPlaylists]);
 
@@ -94,13 +98,19 @@ const PlaylistList = () => {
                         <p>Vous devez être connectés pour accéder aux playlists.</p>
                     </div>
                 )
-                : (
-                    <div className={classes.list}>
-                        {playlists.map((fav, index) =>
+                : playlists.length === 0
+                    ? (
+                      <div className={classes.emptyList}>
+                          <p>Vous n'avez pas de playlists pour le moment</p>
+                      </div>
+                    )
+                    : (
+                      <div className={classes.list}>
+                          {playlists.map((fav, index) =>
                             <PlaylistItem item={fav} key={index}/>
-                        )}
-                    </div>
-                )
+                          )}
+                      </div>
+                    )
             }
         </div>
     );

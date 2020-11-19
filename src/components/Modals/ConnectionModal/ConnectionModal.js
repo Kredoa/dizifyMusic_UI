@@ -7,7 +7,7 @@ import {BACKGROUND_COLOR, ERROR_COLOR} from "../../../assets/theme/colors";
 import {BASE_URL_API} from "../../../assets/config/config";
 import axios from "axios";
 import UserContext from "../../../context/User/UserContext";
-import {Redirect} from "react-router-dom";
+import {Redirect, useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     modalBackground: {
@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const LogInBody = ({handleClose}) => {
+    const history = useHistory();
     const classes = useStyles();
     const [error, setError] = useState();
     const userContext = useContext(UserContext);
@@ -53,7 +54,7 @@ const LogInBody = ({handleClose}) => {
           .then(res => {
               userContext.setUser(res.data)
               handleClose()
-              return <Redirect to='/'  />
+              history.push('/');
           })
           .catch(error => setError('Identifiants Invalides'))
     }
@@ -87,6 +88,7 @@ const LogInBody = ({handleClose}) => {
 };
 
 const SignUpBody = ({handleClose}) => {
+    const history = useHistory();
     const classes = useStyles();
     const [error, setError] = useState();
     const userContext = useContext(UserContext);
@@ -102,7 +104,7 @@ const SignUpBody = ({handleClose}) => {
           .then(res => {
               userContext.setUser(res.data)
               handleClose()
-              return <Redirect to='/'  />
+              history.push('/');
           })
           .catch(error => setError('Inscription impossible, merci de réessayer ultérieurement'))
     }

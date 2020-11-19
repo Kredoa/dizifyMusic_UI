@@ -141,6 +141,11 @@ const SideMenu = ({menu, selected}) => {
         setPlayerRunning(true);
     };
 
+    const getLabel = (role) => {
+        if(role === 'ROLE_USER') return "Utilisateur"
+        if(role === 'ROLE_ADMIN') return "Admin"
+    }
+
     return(
         <>
             <div className={classes.menuDiv}>
@@ -178,7 +183,7 @@ const SideMenu = ({menu, selected}) => {
                             : <h3>Invité</h3>
                         }
                         { currentUser
-                            ? <span>{currentUser.role}</span>
+                            ? <span>{getLabel(currentUser.role) || 'Utilisateur'}</span>
                             : <span>Visiteur</span>
                         }
                     </div>

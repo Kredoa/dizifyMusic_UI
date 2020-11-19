@@ -7,6 +7,7 @@ import UserContext from "../../context/User/UserContext";
 import axios from "axios";
 import {BASE_URL_API} from "../../assets/config/config";
 import {favoritesList} from "../../assets/datas/Favorites/favoritesList";
+import PlaylistItem from "../PlaylistsList/Playlist/PlaylistItem";
 
 const useStyles = makeStyles(theme => ({
     favoritesDiv:{
@@ -53,6 +54,13 @@ const useStyles = makeStyles(theme => ({
             fontSize: '20px'
         }
     },
+    emptyList: {
+        width: '100%',
+        height: '260px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 }));
 
 const getAllFavorites = (token) => {
@@ -66,12 +74,14 @@ const FavorisList = () => {
 
     const classes = useStyles();
     const userContext = useContext(UserContext);
-    // const [favorites, setFavorites] = useState();
+    const [favorites, setFavorites] = useState([]);
 
-    // useEffect(() => {
-    //     getAllFavorites(userContext.user.token)
-    //       .then(res => console.log(res))
-    // }, [setFavorites]);
+    useEffect(() => {
+        if(userContext.user) {
+            getAllFavorites(userContext.user.token)
+              .then(res => setFavorites(res.data))
+        }
+    }, [setFavorites]);
 
     return(
         <div className={userContext.user ? classes.favoritesDiv : classes.favoritesDivLoggedOut}>
@@ -89,13 +99,19 @@ const FavorisList = () => {
                         <p>Vous devez être connectés pour accéder aux favoris.</p>
                     </div>
                 )
-                : (
-                    <div className={classes.list}>
-                        {favoritesList.map((fav, index) =>
+                : favorites.length === 0
+                    ? (
+                      <div className={classes.emptyList}>
+                          <p>Vous n'avez pas de favoris pour le moment</p>
+                      </div>
+                    )
+                    : (
+                      <div className={classes.list}>
+                          {favorites.map((fav, index) =>
                             <FavorisItem item={fav} key={index}/>
-                        )}
-                    </div>
-                )
+                          )}
+                      </div>
+                    )
             }
         </div>
     );

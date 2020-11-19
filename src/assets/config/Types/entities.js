@@ -1,3 +1,3 @@
-export const ARTISTE_TYPE = "Artiste";
-export const ALBUM_TYPE = "Album";
-export const TITRE_TYPE = "Titre";
+export const ARTISTE_TYPE = "ARTIST_TYPE";
+export const ALBUM_TYPE = "ALBUM_TYPE";
+export const TITRE_TYPE = "TITLE_TYPE";
