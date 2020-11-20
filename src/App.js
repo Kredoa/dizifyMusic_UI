@@ -11,6 +11,8 @@ import FavoriteDetails from "./pages/FavoritesPages/FavoritesDetails/FavoriteDet
 import AlbumsPage from "./pages/AlbumsPage/AlbumsPage";
 import ArtistsPage from "./pages/ArtistsPage/ArtistsPage";
 import PlaylistsPage from "./pages/PlaylistsPage/PlaylistsPage";
+import ModalAdd from './components/Modals/AddModal/ModalsAdd'
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -25,6 +27,8 @@ const useStyles = makeStyles(theme => ({
         position: 'relative',
         flexGrow: 1,
     },
+    
+
 }));
 
 function useQuery() {
@@ -66,6 +70,8 @@ function App() {
                         return <PlaylistsPage {...props} />
                     }}/>
                 </Switch>
+                
+                <ModalAdd />
             </div>
         </div>
     </div>
