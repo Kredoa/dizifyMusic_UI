@@ -13,6 +13,11 @@ import ArtistsPage from "./pages/ArtistsPage/ArtistsPage";
 import PlaylistsPage from "./pages/PlaylistsPage/PlaylistsPage";
 import ModalAdd from './components/Modals/AddModal/ModalsAdd'
 
+import AlbumDetails from "./pages/Details/Album/AlbumDetails";
+import AuthorDetails from "./pages/Details/Author/AuthorDetails";
+import PlaylistDetails from "./pages/Details/Playlist/PlaylistDetails";
+import TitleProvider from "./context/Title/TitleProvider";
+import UserProvider from "./context/User/UserProvider";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -36,45 +41,51 @@ function useQuery() {
 }
 
 function App() {
-    const [selected, setSelected] = useState('Accueil')
+    const [selected, setSelected] = useState('Accueil');
     const classes = useStyles();
     const query = useQuery();
 
     return (
-    <div className="App">
-        <div className={classes.root}>
-            <SideMenu menu={menuItems} selected={selected}/>
-            <div className={classes.content}>
-                <NavBar />
-                <Switch>
-                    <Route path="/" exact={true} render={(props) => {
-                        setSelected('Accueil');
-                        return <HomePage {...props} />
-                    }}/>
-                    <Route path="/favorites" exact={true} render={(props)=> {
-                        let id = query.get("id");
-                        let type = query.get("type");
-                        setSelected('Favoris');
-                        return id ? <FavoriteDetails id={id} type={type} {...props} /> : <FavoritesPage {...props} />
-                    }}/>
-                    <Route path="/albums" exact={true} render={(props) => {
-                        setSelected('Albums');
-                        return <AlbumsPage {...props} />
-                    }}/>
-                    <Route path="/artists" exact={true} render={(props) => {
-                        setSelected('Artistes');
-                        return <ArtistsPage {...props} />
-                    }}/>
-                    <Route path="/playlists" exact={true} render={(props) => {
-                        setSelected('Playlists');
-                        return <PlaylistsPage {...props} />
-                    }}/>
-                </Switch>
-                
-                <ModalAdd />
-            </div>
-        </div>
-    </div>
+        <UserProvider>
+            <TitleProvider>
+                <div className="App">
+                    <div className={classes.root}>
+                        <SideMenu menu={menuItems} selected={selected}/>
+                        <div className={classes.content}>
+                            <NavBar />
+                            <Switch>
+                                <Route path="/" exact={true} render={(props) => {
+                                    setSelected('Accueil');
+                                    return <HomePage {...props} />
+                                }}/>
+                                <Route path="/favorites" exact={true} render={(props)=> {
+                                    let id = query.get("id");
+                                    let type = query.get("type");
+                                    setSelected('Favoris');
+                                    return id ? <FavoriteDetails id={id} type={type} {...props} /> : <FavoritesPage {...props} />
+                                }}/>
+                                <Route path="/albums" exact={true} render={(props) => {
+                                    let id = query.get("id");
+                                    setSelected('Albums');
+                                    return id ? <AlbumDetails id={id} {...props} /> : <AlbumsPage {...props} />
+                                }}/>
+                                <Route path="/artists" exact={true} render={(props) => {
+                                    let id = query.get("id");
+                                    setSelected('Artistes');
+                                    return id ? <AuthorDetails id={id} {...props} /> : <ArtistsPage {...props} />
+                                }}/>
+                                <Route path="/playlists" exact={true} render={(props) => {
+                                    let id = query.get("id");
+                                    setSelected('Playlists');
+                                    return id ? <PlaylistDetails id={id} {...props} /> : <PlaylistsPage {...props} />
+                                }}/>
+                            </Switch>
+                            <ModalAdd />
+                        </div>
+                    </div>
+                </div>
+            </TitleProvider>
+        </UserProvider>
     );
 }
 

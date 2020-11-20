@@ -1,11 +1,13 @@
-import React from "react";
+import React, {useContext, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import SearchIcon from '@material-ui/icons/Search';
-import InputBase from "@material-ui/core/InputBase";
 import {fade} from "@material-ui/core";
 import {BLACK, PRIMARY_COLOR} from "../../assets/theme/colors";
+import UserContext from "../../context/User/UserContext";
+import ConnectionModal from "../Modals/ConnectionModal/ConnectionModal";
+import {Redirect} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     appBar: {
@@ -21,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     toolBar: {
         flexDirection: 'initial',
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         alignItems: 'center',
         padding: '0 20px'
     },
@@ -101,36 +103,54 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const NavBar = () => {
-
+    const history = useHistory();
     const classes = useStyles();
+    const userContext = useContext(UserContext);
+    const currentUser = userContext.user;
+    const [open, setOpen] = useState(false);
+    const [signIn, setSignin] = useState(false);
+
+    const handleShow = (s) => {
+        setOpen(true);
+        setSignin(s);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setSignin(false);
+    };
+
+    const handleLogOut = () => {
+        userContext.setUser(null);
+        history.push('/');
+    };
 
     return(
         <>
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar className={classes.toolBar}>
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
-                        </div>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </div>
-                    <ul className={classes.navList}>
-                        <li>
-                            <a className={classes.a} href={'#'}>Se connecter</a>
-                        </li>
-                        <li>
-                            <a className={classes.a} href={'#'}>S'inscrire</a>
-                        </li>
-                    </ul>
+                    { currentUser
+                        ? (
+                            <ul className={classes.navList}>
+                                <li>
+                                    <a className={classes.a} href={'#'} onClick={handleLogOut}>Déconnexion</a>
+                                </li>
+                            </ul>
+                        )
+                        : (
+                            <ul className={classes.navList}>
+                                <li onClick={() => handleShow(false)}>
+                                    <a className={classes.a} href={'#'}>Se connecter</a>
+                                </li>
+                                <li onClick={() => handleShow(true)}>
+                                    <a className={classes.a} href={'#'}>S'inscrire</a>
+                                </li>
+                            </ul>
+                        )
+                    }
                 </Toolbar>
             </AppBar>
+            <ConnectionModal open={open} handleClose={handleClose} signIn={signIn}/>
         </>
     );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../../../assets/datas/Types/entities";
+import {ALBUM_TYPE, ARTISTE_TYPE} from "../../../assets/config/Types/entities";
 import AuthorDetails from "../../Details/Author/AuthorDetails";
 import AlbumDetails from "../../Details/Album/AlbumDetails";
 

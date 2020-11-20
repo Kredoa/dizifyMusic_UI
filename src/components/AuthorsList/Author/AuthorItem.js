@@ -12,9 +12,17 @@ const useStyles = makeStyles(theme => ({
     card: {
         maxWidth: '150px',
     },
+    cardArea: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        '&>img': {
+            maxWidth: '10em',
+            height: '10em',
+        },
+    },
     cardContent: {
-        padding: '5px',
-        textAlign: 'center',
+        padding: '10px',
         '&>span': {
             color: USER_ROLE_COLOR,
         },
@@ -24,15 +32,9 @@ const useStyles = makeStyles(theme => ({
 const AuthorItem = ({item}) => {
     const classes = useStyles();
 
-    const getNbTitres = (item) => {
-        const array =Array.from({length:20},(v,k)=>k*1);
-        const nb = array[Math.floor(Math.random()*array.length)];
-        return nb;
-    }
-
     return(
-        <Card className={classes.card}>
-            <CardActionArea >
+        <Card>
+            <CardActionArea className={classes.cardArea} href={`/artists?id=${item.id}`}>
                 <CardMedia
                     component="img"
                     alt={item.name}
@@ -41,7 +43,7 @@ const AuthorItem = ({item}) => {
                 />
                 <CardContent className={classes.cardContent}>
                     <h2>{item.name}</h2>
-                    <span>{getNbTitres(item)} album(s)</span>
+                    <span>{item.albums.length} album(s)</span>
                 </CardContent>
             </CardActionArea>
         </Card>

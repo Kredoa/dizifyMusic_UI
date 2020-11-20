@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   PLAYER_BACKGROUND_COLOR,
@@ -22,6 +22,8 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import CloseIcon from "@material-ui/icons/Close";
+import TitleContext from "../../context/Title/TitleContext";
+import UserContext from "../../context/User/UserContext";
 
 const useStyles = makeStyles((theme) => ({
   menuDiv: {
@@ -107,11 +109,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideMenu = ({ menu, selected }) => {
-  const classes = useStyles();
+const SideMenu = ({menu, selected}) => {
+    const classes = useStyles();
+    const context = useContext(TitleContext);
+    const userContext = useContext(UserContext);
 
-  const [playerRunning, setPlayerRunning] = useState(false);
-  const [player, setPlayer] = useState(false);
+    const [playerRunning, setPlayerRunning] = useState(true);
+    const title = context.title;
+    const currentUser = userContext.user;
+
+    const isDisabled = (item) => {
+        if(item.label === 'Favoris' || item.label === 'Playlists') {
+            return !userContext.user;
+        }
+        return false;
+    };
 
   const ListItemLink = (props) => {
     return <ListItem button component={"a"} {...props} />;
@@ -122,73 +134,100 @@ const SideMenu = ({ menu, selected }) => {
     setPlayerRunning(!playerRunning);
   };
 
-  return (
-    <>
-      <div className={classes.menuDiv}>
-        <div className={classes.profile}>
-          <Badge
-            className={classes.badge}
-            overlap="circle"
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            badgeContent={
-              <IconButton aria-label="changer la photo" size={"small"}>
-                <AddIcon className={classes.badgeIcon} />
-              </IconButton>
-            }
-          >
-            <Avatar alt="Travis Howard" src={"https://i.pravatar.cc/200"} />
-          </Badge>
-          <div className={classes.profileInfo}>
-            <h3>Guest Name</h3>
-            <span>Utilisateur</span>
-          </div>
-        </div>
-        <Divider />
-        <List className={classes.list}>
-          {menu.map((item, index) => (
-            <ListItemLink
-              key={index}
-              href={item.linkTo}
-              selected={selected === item.label}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText>{item.label}</ListItemText>
-            </ListItemLink>
-          ))}
-        </List>
-        <div className={player ? classes.player : classes.displayNone}>
-          <div className={classes.image}>
-            <img src="https://i.pravatar.cc/200" alt="" />
-            <IconButton aria-label="close" className={classes.close}>
-              <CloseIcon />
-            </IconButton>
-          </div>
-          <div className={classes.title}>
-            <h3>Cabeza</h3>
-            <span>OBOY</span>
-          </div>
-          <div>
-            <IconButton aria-label="previous">
-              <SkipPreviousIcon />
-            </IconButton>
-            <IconButton aria-label="play/pause">
-              {playerRunning ? (
-                <PauseIcon fontSize={"large"} onClick={handlePlayerclick} />
-              ) : (
-                <PlayArrowIcon fontSize={"large"} onClick={handlePlayerclick} />
-              )}
-            </IconButton>
-            <IconButton aria-label="next">
-              <SkipNextIcon />
-            </IconButton>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+    const closePlayer = () => {
+        context.setTitle(null);
+        setPlayerRunning(true);
+    };
+
+    const getLabel = (role) => {
+        if(role === 'ROLE_USER') return "Utilisateur"
+        if(role === 'ROLE_ADMIN') return "Admin"
+    }
+
+    return(
+        <>
+            <div className={classes.menuDiv}>
+                <div className={classes.profile}>
+                    {
+                        currentUser
+                            ? (
+                                <Badge
+                                    className={classes.badge}
+                                    overlap="circle"
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                    badgeContent={
+                                        <IconButton aria-label="changer la photo" size={'small'}>
+                                            <AddIcon className={classes.badgeIcon}/>
+                                        </IconButton>
+                                    }
+                                >
+                                    {
+                                        currentUser.image
+                                            ? <Avatar alt="Travis Howard" src={currentUser.image} />
+                                            : <Avatar alt="Invité">{currentUser.username.charAt(0)}</Avatar>
+                                    }
+                                </Badge>
+                            )
+                            : (
+                                <Avatar alt="Invité">I</Avatar>
+                            )
+                    }
+                    <div className={classes.profileInfo}>
+                        { currentUser
+                            ? <h3>{currentUser.username}</h3>
+                            : <h3>Invité</h3>
+                        }
+                        { currentUser
+                            ? <span>{getLabel(currentUser.role) || 'Utilisateur'}</span>
+                            : <span>Visiteur</span>
+                        }
+                    </div>
+                </div>
+                <Divider />
+                <List className={classes.list}>
+                    {menu.map((item, index) => (
+                        <ListItemLink key={index} href={item.linkTo} selected={selected === item.label} disabled={isDisabled(item)} >
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText>{item.label}</ListItemText>
+                        </ListItemLink>
+                    ))}
+                </List>
+                {
+                    title && (
+                        <div className={classes.player}>
+                            <div className={classes.image}>
+                                <img src="https://i.pravatar.cc/200" alt=""/>
+                                <IconButton aria-label="close" className={classes.close} onClick={closePlayer} >
+                                    <CloseIcon/>
+                                </IconButton>
+                            </div>
+                            <div className={classes.title}>
+                                <h3>{title.name}</h3>
+                                <span>{title.duration}</span>
+                            </div>
+                            <div>
+                                <IconButton aria-label="previous">
+                                    <SkipPreviousIcon />
+                                </IconButton>
+                                <IconButton aria-label="play/pause">
+                                    {playerRunning
+                                        ? <PauseIcon fontSize={"large"} onClick={handlePlayerclick}/>
+                                        : <PlayArrowIcon fontSize={"large"} onClick={handlePlayerclick}/>
+                                    }
+                                </IconButton>
+                                <IconButton aria-label="next">
+                                    <SkipNextIcon />
+                                </IconButton>
+                            </div>
+                        </div>
+                    )
+                }
+            </div>
+        </>
+    )
 };
 
 SideMenu.propTypes = {

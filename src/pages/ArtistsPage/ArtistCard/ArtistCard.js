@@ -35,7 +35,7 @@ const ArtistCard = ({item}) => {
 
     return(
         <Card>
-            <CardActionArea className={classes.cardArea} href={`#`}>
+            <CardActionArea className={classes.cardArea} href={`/artists?id=${item.id}`}>
                 <CardMedia
                     component="img"
                     alt={item.name}
