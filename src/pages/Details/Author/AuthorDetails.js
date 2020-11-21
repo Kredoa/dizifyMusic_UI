@@ -13,6 +13,7 @@ import UserContext from "../../../context/User/UserContext";
 import TitleContext from "../../../context/Title/TitleContext";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -139,7 +140,7 @@ const Artist = ({artist}) => {
     const currentUser = userContext.user;
     const [nbFollowers, setFollowers] = useState(getRandomFollowers(1000000, 3000000));
     const [anchorEl, setAnchorEl] = useState(null);
-    const isFavorite = false;
+    const [isFavorite, setIsFavorite] = useState(artist.favoriteId);
     const titlesNotInAlbum = artist.titles.filter(t => !t.album);
 
     function getRandomFollowers(min, max) {
@@ -168,6 +169,25 @@ const Artist = ({artist}) => {
         setRunningTitle(e, artist.titles[random]);
     };
 
+    const addToFavorites = (id) => {
+        const body = {
+            artist_id: id,
+        };
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.post(`${BASE_URL_API}favorites`, body, { headers })
+    };
+
+    const deleteFromFavorites = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.delete(`${BASE_URL_API}favorites/${id}`, { headers })
+    };
+
+    console.log(artist)
+
     return(
         <>
             <div className={classes.header}>
@@ -183,8 +203,7 @@ const Artist = ({artist}) => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={handleClose}>Ajouter à ma playlist</MenuItem>
-                            <MenuItem onClick={handleClose}>Supprimer cet album</MenuItem>
+                            <MenuItem onClick={handleClose}>Supprimer cet Auteur</MenuItem>
                         </Menu>
                     </>
                 )}
@@ -195,12 +214,12 @@ const Artist = ({artist}) => {
                         ? (
                             isFavorite
                                 ? (
-                                    <Button variant={"contained"} color={"primary"} className={classes.favAdd}>
+                                    <Button variant={"contained"} color={"primary"} className={classes.favAdd} onClick={() => deleteFromFavorites(artist.favoriteId).then(() => setIsFavorite(false))} >
                                         Retirer des favoris
                                     </Button>
                                 )
                                 : (
-                                    <Button variant={"outlined"} className={classes.favAdd}>
+                                    <Button variant={"outlined"} className={classes.favAdd} onClick={() => addToFavorites(artist.id).then(() => setIsFavorite(true))} >
                                         Ajouter aux favoris
                                     </Button>
                                 )

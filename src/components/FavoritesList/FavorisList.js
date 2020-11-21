@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     list: {
         padding: '5px 0',
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
         gridGap: '1rem',
     },
     hover: {
@@ -74,14 +74,15 @@ const FavorisList = () => {
 
     const classes = useStyles();
     const userContext = useContext(UserContext);
+    const currentUser = userContext.user
     const [favorites, setFavorites] = useState([]);
 
     useEffect(() => {
-        if(userContext.user) {
+        if(currentUser) {
             getAllFavorites(userContext.user.token)
               .then(res => setFavorites(res.data))
         }
-    }, [setFavorites]);
+    }, [currentUser]);
 
     return(
         <div className={userContext.user ? classes.favoritesDiv : classes.favoritesDivLoggedOut}>

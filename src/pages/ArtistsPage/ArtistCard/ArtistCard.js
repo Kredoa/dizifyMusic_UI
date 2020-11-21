@@ -43,7 +43,7 @@ const ArtistCard = ({item}) => {
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
-                    <h2>{item.name}</h2>
+                    <h3>{item.name}</h3>
                     <span>Artiste</span>
                     <br/>
                     <span>{item.albums.length} album(s)</span>

@@ -7,7 +7,6 @@ import {BACKGROUND_COLOR, ERROR_COLOR} from "../../../assets/theme/colors";
 import {BASE_URL_API} from "../../../assets/config/config";
 import axios from "axios";
 import UserContext from "../../../context/User/UserContext";
-import {Redirect, useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     modalBackground: {
@@ -39,7 +38,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const LogInBody = ({handleClose}) => {
-    const history = useHistory();
     const classes = useStyles();
     const [error, setError] = useState();
     const userContext = useContext(UserContext);
@@ -49,17 +47,20 @@ const LogInBody = ({handleClose}) => {
             username: username,
             password: pwd
         }
+        console.log(body)
+        console.log("connect")
         axios
           .post(`${BASE_URL_API}auth/signin`, body)
           .then(res => {
+              console.log(res)
               userContext.setUser(res.data)
-              handleClose()
-              history.push('/');
           })
+          .then(() => handleClose())
           .catch(error => setError('Identifiants Invalides'))
     }
 
     const handleLogIn = (event) => {
+        console.log("submit");
         const un = event.target.username.value;
         const pd = event.target.password.value;
         connectUser(un, pd);
@@ -67,7 +68,7 @@ const LogInBody = ({handleClose}) => {
 
     return(
         <div className={classes.modal}>
-            <h1>Connectez-vous</h1>
+            <h2>Connectez-vous</h2>
             <form className={classes.form} autoComplete="off" onSubmit={handleLogIn}>
                 <TextField
                     className={classes.fields}
@@ -88,7 +89,6 @@ const LogInBody = ({handleClose}) => {
 };
 
 const SignUpBody = ({handleClose}) => {
-    const history = useHistory();
     const classes = useStyles();
     const [error, setError] = useState();
     const userContext = useContext(UserContext);
@@ -103,9 +103,8 @@ const SignUpBody = ({handleClose}) => {
           .post(`${BASE_URL_API}auth/signup`, body)
           .then(res => {
               userContext.setUser(res.data)
-              handleClose()
-              history.push('/');
           })
+          .then(() => handleClose())
           .catch(error => setError('Inscription impossible, merci de réessayer ultérieurement'))
     }
 
@@ -118,7 +117,7 @@ const SignUpBody = ({handleClose}) => {
 
     return(
         <div className={classes.modal}>
-            <h1>Inscrivez-vous</h1>
+            <h2>Inscrivez-vous</h2>
             <form className={classes.form} autoComplete="off" onSubmit={handleSignUp}>
                 <TextField
                     className={classes.fields}

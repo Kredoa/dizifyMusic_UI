@@ -39,12 +39,11 @@ const getTitle = (id) => {
     return axios.get(`${BASE_URL_API}titles/${id}`)
 };
 
-const FavoriteCard = ({item}) => {
+const FavoriteCard = ({item, deleteFav}) => {
     const history = useHistory();
     const classes = useStyles();
     const titleContext = useContext(TitleContext);
-    const [title, setTitle] = useState();
-    console.log(item)
+    const [title, setTitle] = useState()
 
     useEffect(() => {
         if(item.type === TITRE_TYPE) {
@@ -64,7 +63,7 @@ const FavoriteCard = ({item}) => {
         if(item.type === ALBUM_TYPE) {
             history.push(`/albums?id=${item.album_id}`);
         } else {
-            history.push(`/albums?id=${item.artist_id}`);
+            history.push(`/artists?id=${item.artist_id}`);
         }
     }
 
@@ -83,15 +82,13 @@ const FavoriteCard = ({item}) => {
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
-                    <h2>{item.name}</h2>
+                    <h3>{item.name}</h3>
                     {(item.type === ARTISTE_TYPE)
                         ? <span>Artiste</span>
                         : (item.type === ALBUM_TYPE)
-                            ? <span>Album de Machin</span>
-                            // ? <span>Album de {item.auteur.name}</span>
+                            ? <span>Album de {item.artist.name}</span>
                             : (item.type === TITRE_TYPE)
-                                ? <span>Titre de Machin</span>
-                                // ? <span>Titre de {item.auteur.name}</span>
+                                ? <span>Titre de {item.artist.name}</span>
                                 : <span></span>
                     }
                 </CardContent>
@@ -101,6 +98,7 @@ const FavoriteCard = ({item}) => {
                     variant="text"
                     size="small"
                     startIcon={<DeleteIcon />}
+                    onClick={() => deleteFav(item.id)}
                 >
                     Retirer des favoris
                 </Button>
@@ -111,6 +109,7 @@ const FavoriteCard = ({item}) => {
 
 FavoriteCard.propTypes = {
     item: PropTypes.object.isRequired,
+    deleteFromFavorites: PropTypes.func.isRequired,
 };
 
 export default FavoriteCard;

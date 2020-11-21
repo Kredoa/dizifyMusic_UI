@@ -18,6 +18,7 @@ import UserContext from "../../../context/User/UserContext";
 import TitleContext from "../../../context/Title/TitleContext";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -99,17 +100,24 @@ const useStyleParent = makeStyles(theme => ({
     }
 }));
 
-const getAlbum = async (id) => {
-    const res = await fetch(`${BASE_URL_API}albums/${id}`);
-    return await res.json();
+const getAlbum = (user, id) => {
+    if(user) {
+        const headers = {
+            'Authorization': `Bearer ${user.token}`,
+        };
+        return axios.get(`${BASE_URL_API}albums/${id}`, { headers })
+    } else {
+        return axios.get(`${BASE_URL_API}albums/${id}`)
+    }
 };
 
 const AlbumDetails = ({id}) => {
-
     const [album, setAlbum] = useState();
+    const userContext = useContext(UserContext);
+    const currentUser = userContext.user;
 
     useEffect(() => {
-        getAlbum(id).then(res => setAlbum(res))
+        getAlbum(currentUser, id).then(res => setAlbum(res.data))
     }, [setAlbum, id]);
 
     const classesParent = useStyleParent();
@@ -141,10 +149,10 @@ const Album = ({album}) => {
     const [nbListening, setListening] = useState(getRandomListening(1000000, 3000000));
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorEl2, setAnchorEl2] = useState(null);
+    const [isFavorite, setIsFavorite] = useState(album.favoriteId)
     const userContext = useContext(UserContext);
     const titleContext = useContext(TitleContext);
     const currentUser = userContext.user;
-    const isFavorite = false;
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -180,6 +188,35 @@ const Album = ({album}) => {
         return res.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }
 
+    const addToFavorites = (id) => {
+        const body = {
+            album_id: id,
+        };
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.post(`${BASE_URL_API}favorites`, body, { headers })
+    };
+
+    const addTitleToFavorites = (id) => {
+        const body = {
+            title_id: id,
+        };
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.post(`${BASE_URL_API}favorites`, body, { headers })
+    };
+
+    const deleteFromFavorites = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.delete(`${BASE_URL_API}favorites/${id}`, { headers })
+    };
+
+    console.log(album)
+
     return(
         <>
             <div className={classes.header}>
@@ -206,12 +243,12 @@ const Album = ({album}) => {
                         ? (
                             isFavorite
                                 ? (
-                                    <Button variant={"contained"} color={"primary"} className={classes.favAdd}>
+                                    <Button variant={"contained"} color={"primary"} className={classes.favAdd} onClick={() => deleteFromFavorites(album.favoriteId).then(() => setIsFavorite(false))}>
                                         Retirer des favoris
                                     </Button>
                                 )
                                 : (
-                                    <Button variant={"outlined"} className={classes.favAdd}>
+                                    <Button variant={"outlined"} className={classes.favAdd} onClick={() => addToFavorites(album.id).then(() => setIsFavorite(true))}>
                                         Ajouter aux favoris
                                     </Button>
                                 )
@@ -231,39 +268,58 @@ const Album = ({album}) => {
                     <h2>Titres</h2>
                     <List className={classes.list}>
                         {
-                            album.titles.map((title, index) => (
-                                <ListItem button key={index} onClick={(e) => setRunningTitle(e, title)}>
-                                    <ListItemAvatar>
-                                        {
-                                            title.image
+                            album.titles.map((title, index) => {
+                                currentUser.role === 'ROLE_USER' && title.favoriteId
+                                  ? console.log("title", title.favoriteId)
+                                  : console.log("pas dans favoris")
+                                return(
+                                  <ListItem button key={index} onClick={(e) => setRunningTitle(e, title)}>
+                                      <ListItemAvatar>
+                                          {
+                                              title.image
                                                 ? <Avatar variant={'square'} src={title.image} />
                                                 : <Avatar variant={'square'}>
                                                     <MusicNoteIcon />
                                                 </Avatar>
-                                        }
-                                    </ListItemAvatar>
-                                    <ListItemText primary={title.name} secondary={album.author.name+" · "+title.duration} />
-                                    {currentUser && (
+                                          }
+                                      </ListItemAvatar>
+                                      <ListItemText primary={title.name} secondary={album.author.name+" · "+title.duration} />
+                                      {(currentUser.role === 'ROLE_USER' && title.favoriteId) && (
                                         <ListItemSecondaryAction>
                                             <IconButton edge="end" aria-label="delete" onClick={handleTitleMenu}>
                                                 <MoreVertIcon />
                                             </IconButton>
                                             <Menu
-                                                id="simple-menu"
-                                                anchorEl={anchorEl2}
-                                                keepMounted
-                                                open={Boolean(anchorEl2)}
-                                                onClose={closeTitleMenu}
+                                            id="simple-menu"
+                                            anchorEl={anchorEl2}
+                                            keepMounted
+                                            open={Boolean(anchorEl2)}
+                                            onClose={closeTitleMenu}
                                             >
                                                 <MenuItem onClick={closeTitleMenu}>Ajouter à ma playlist</MenuItem>
-                                                <MenuItem onClick={closeTitleMenu}>Ajouter au favoris</MenuItem>
-                                                <MenuItem onClick={closeTitleMenu}>Retirer ce titre de l'album</MenuItem>
-                                                <MenuItem onClick={closeTitleMenu}>Supprimer ce titre</MenuItem>
                                             </Menu>
                                         </ListItemSecondaryAction>
-                                    )}
-                                </ListItem>
-                            ))
+                                      )}
+                                      {(currentUser.role === 'ROLE_USER' && !title.favoriteId) && (
+                                        <ListItemSecondaryAction>
+                                            <IconButton edge="end" aria-label="delete" onClick={handleTitleMenu}>
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                            <Menu
+                                              id="simple-menu"
+                                              anchorEl={anchorEl2}
+                                              keepMounted
+                                              open={Boolean(anchorEl2)}
+                                              onClose={closeTitleMenu}
+                                            >
+                                                <MenuItem onClick={closeTitleMenu}>Ajouter à ma playlist</MenuItem>
+                                                <MenuItem onClick={() => addTitleToFavorites(title.id).then(closeTitleMenu)}>Ajouter au favoris</MenuItem>
+                                            </Menu>
+                                        </ListItemSecondaryAction>
+                                      )}
+                                  </ListItem>
+                                )
+                            })
                         }
                     </List>
                 </div>
