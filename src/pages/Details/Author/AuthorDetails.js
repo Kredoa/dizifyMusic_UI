@@ -13,6 +13,8 @@ import UserContext from "../../../context/User/UserContext";
 import TitleContext from "../../../context/Title/TitleContext";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import axios from "axios";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -134,12 +136,13 @@ const AuthorDetails = ({id}) => {
 
 const Artist = ({artist}) => {
     const classes = useStyles();
+    const history = useHistory();
     const userContext = useContext(UserContext);
     const titleContext = useContext(TitleContext);
     const currentUser = userContext.user;
     const [nbFollowers, setFollowers] = useState(getRandomFollowers(1000000, 3000000));
     const [anchorEl, setAnchorEl] = useState(null);
-    const isFavorite = false;
+    const [isFavorite, setIsFavorite] = useState(artist.favoriteId);
     const titlesNotInAlbum = artist.titles.filter(t => !t.album);
 
     function getRandomFollowers(min, max) {
@@ -157,6 +160,20 @@ const Artist = ({artist}) => {
         setAnchorEl(null);
     };
 
+    const deleteAuthorById = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.delete(`${BASE_URL_API}albums/${id}`, { headers })
+    };
+
+    const deleteAuthor = () => {
+        console.log("delete Author")
+        deleteAuthorById(artist.id)
+          .then(() => handleClose())
+          .then(() => history.push('/artists'));
+    }
+
     const setRunningTitle = (e, object) => {
         e.preventDefault();
         titleContext.setTitle(object);
@@ -168,10 +185,29 @@ const Artist = ({artist}) => {
         setRunningTitle(e, artist.titles[random]);
     };
 
+    const addToFavorites = (id) => {
+        const body = {
+            artist_id: id,
+        };
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.post(`${BASE_URL_API}favorites`, body, { headers })
+    };
+
+    const deleteFromFavorites = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.delete(`${BASE_URL_API}favorites/${id}`, { headers })
+    };
+
+    console.log(artist)
+
     return(
         <>
             <div className={classes.header}>
-                { currentUser && (
+                { currentUser.role === 'ROLE_ADMIN' && (
                     <>
                         <IconButton className={classes.deleteButton} aria-label="delete" onClick={handleClick}>
                             <MoreVertIcon />
@@ -183,24 +219,23 @@ const Artist = ({artist}) => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={handleClose}>Ajouter à ma playlist</MenuItem>
-                            <MenuItem onClick={handleClose}>Supprimer cet album</MenuItem>
+                            <MenuItem onClick={deleteAuthor}>Supprimer cet Auteur</MenuItem>
                         </Menu>
                     </>
                 )}
                 <Avatar className={classes.avatar} alt={artist.name} src={"https://i.pravatar.cc/200"} />
                 <h2>{artist.name}</h2>
                 {
-                    currentUser
+                    (currentUser && currentUser.role === 'ROLE_USER')
                         ? (
                             isFavorite
                                 ? (
-                                    <Button variant={"contained"} color={"primary"} className={classes.favAdd}>
+                                    <Button variant={"contained"} color={"primary"} className={classes.favAdd} onClick={() => deleteFromFavorites(artist.favoriteId).then(() => setIsFavorite(false))} >
                                         Retirer des favoris
                                     </Button>
                                 )
                                 : (
-                                    <Button variant={"outlined"} className={classes.favAdd}>
+                                    <Button variant={"outlined"} className={classes.favAdd} onClick={() => addToFavorites(artist.id).then(() => setIsFavorite(true))} >
                                         Ajouter aux favoris
                                     </Button>
                                 )

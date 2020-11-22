@@ -122,6 +122,7 @@ const NavBar = () => {
 
     const handleLogOut = () => {
         userContext.setUser(null);
+        sessionStorage.clear();
         history.push('/');
     };
 

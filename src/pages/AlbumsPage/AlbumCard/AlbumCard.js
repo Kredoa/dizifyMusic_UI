@@ -42,7 +42,7 @@ const AlbumCard = ({item}) => {
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
-                    <h2>{item.name}</h2>
+                    <h3>{item.name}</h3>
                     <span>Album de {item.author.name}</span>
                     <br/>
                     <span>{new Date(item.publicationDate).getFullYear()+" · "+item.titles.length+" titre(s)"}</span>

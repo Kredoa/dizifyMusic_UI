@@ -7,7 +7,8 @@ import {BACKGROUND_COLOR, ERROR_COLOR} from "../../../assets/theme/colors";
 import {BASE_URL_API} from "../../../assets/config/config";
 import axios from "axios";
 import UserContext from "../../../context/User/UserContext";
-import {Redirect, useHistory} from "react-router-dom";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const useStyles = makeStyles(theme => ({
     modalBackground: {
@@ -39,10 +40,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const LogInBody = ({handleClose}) => {
-    const history = useHistory();
     const classes = useStyles();
     const [error, setError] = useState();
     const userContext = useContext(UserContext);
+    const [checked, setChecked] = useState(false);
+
+    const handleCheck = (event) => {
+        setChecked(event.target.checked);
+    };
 
     const connectUser = (username, pwd) => {
         const body = {
@@ -52,22 +57,42 @@ const LogInBody = ({handleClose}) => {
         axios
           .post(`${BASE_URL_API}auth/admin/signin`, body)
           .then(res => {
+              console.log(res)
               userContext.setUser(res.data)
-              handleClose()
-              history.push('/');
           })
+          .then(() => handleClose())
+          .catch(error => setError('Identifiants Invalides'))
+    }
+
+    const connectAdmin = (username, pwd) => {
+        const body = {
+            username: username,
+            password: pwd
+        }
+        axios
+          .post(`${BASE_URL_API}auth/admin/signin`, body)
+          .then(res => {
+              console.log(res)
+              userContext.setUser(res.data)
+          })
+          .then(() => handleClose())
           .catch(error => setError('Identifiants Invalides'))
     }
 
     const handleLogIn = (event) => {
+        console.log("submit");
         const un = event.target.username.value;
         const pd = event.target.password.value;
-        connectUser(un, pd);
+        if(checked) {
+            connectAdmin(un, pd);
+        } else {
+            connectUser(un, pd);
+        }
     };
 
     return(
         <div className={classes.modal}>
-            <h1>Connectez-vous</h1>
+            <h2>Connectez-vous</h2>
             <form className={classes.form} autoComplete="off" onSubmit={handleLogIn}>
                 <TextField
                     className={classes.fields}
@@ -80,6 +105,16 @@ const LogInBody = ({handleClose}) => {
                     type="password"
                     autoComplete="current-password"
                 />
+                <FormControlLabel
+                  control={
+                      <Checkbox
+                        checked={checked}
+                        onChange={handleCheck}
+                        color={'default'}
+                      />
+                  }
+                  label="S'identifier en tant qu'Admin"
+                />
                 { error && <span className={classes.error}>{error}</span>}
                 <Button className={classes.submit} type={'submit'} variant={"contained"} color={"primary"} >Confirmer</Button>
             </form>
@@ -88,7 +123,6 @@ const LogInBody = ({handleClose}) => {
 };
 
 const SignUpBody = ({handleClose}) => {
-    const history = useHistory();
     const classes = useStyles();
     const [error, setError] = useState();
     const userContext = useContext(UserContext);
@@ -103,9 +137,8 @@ const SignUpBody = ({handleClose}) => {
           .post(`${BASE_URL_API}auth/signup`, body)
           .then(res => {
               userContext.setUser(res.data)
-              handleClose()
-              history.push('/');
           })
+          .then(() => handleClose())
           .catch(error => setError('Inscription impossible, merci de réessayer ultérieurement'))
     }
 
@@ -118,7 +151,7 @@ const SignUpBody = ({handleClose}) => {
 
     return(
         <div className={classes.modal}>
-            <h1>Inscrivez-vous</h1>
+            <h2>Inscrivez-vous</h2>
             <form className={classes.form} autoComplete="off" onSubmit={handleSignUp}>
                 <TextField
                     className={classes.fields}

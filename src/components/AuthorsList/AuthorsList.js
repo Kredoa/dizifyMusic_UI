@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
         display: 'grid',
         // gridTemplateAreas: '"card card card card card card card"',
         // gridGap: '20px',
-        gridTemplateColumns: 'repeat(3, minmax(150px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
         gridGap: '1rem',
     },
     loading: {

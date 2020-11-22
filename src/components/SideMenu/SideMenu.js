@@ -24,6 +24,7 @@ import SkipNextIcon from "@material-ui/icons/SkipNext";
 import CloseIcon from "@material-ui/icons/Close";
 import TitleContext from "../../context/Title/TitleContext";
 import UserContext from "../../context/User/UserContext";
+import {ROLE_ADMIN, ROLE_USER} from "../../assets/config/Roles/roles";
 
 const useStyles = makeStyles((theme) => ({
   menuDiv: {
@@ -120,7 +121,8 @@ const SideMenu = ({menu, selected}) => {
 
     const isDisabled = (item) => {
         if(item.label === 'Favoris' || item.label === 'Playlists') {
-            return !userContext.user;
+            if(!userContext.user || userContext.user.role === 'ROLE_ADMIN')
+            return true;
         }
         return false;
     };
@@ -140,8 +142,8 @@ const SideMenu = ({menu, selected}) => {
     };
 
     const getLabel = (role) => {
-        if(role === 'ROLE_USER') return "Utilisateur"
-        if(role === 'ROLE_ADMIN') return "Admin"
+        if(role === 'ROLE_USER') return ROLE_USER
+        if(role === 'ROLE_ADMIN') return ROLE_ADMIN
     }
 
     return(

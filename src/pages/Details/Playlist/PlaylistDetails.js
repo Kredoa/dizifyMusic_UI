@@ -18,6 +18,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import TitleContext from "../../../context/Title/TitleContext";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -142,8 +143,54 @@ const Playlist = ({playlist}) => {
     const classes = useStyles();
     const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     const titleContext = useContext(TitleContext);
+    const userContext = useContext(UserContext);
+    const currentUser = userContext.user;
+    const history = useHistory();
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorEl2, setAnchorEl2] = useState(null);
+    const [playlistTitles, setPlaylistTitles] = useState([])
+    const [titleOut, setTitleOut] = useState()
+
+    useEffect(() => {
+        const titles = [];
+        playlist.titles.map((t) => titles.push(t.id))
+        setPlaylistTitles(titles)
+    }, [playlist])
+
+    const deleteTitle = (id, titles) => {
+        const body = {
+            title_ids: titles
+        }
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`
+        }
+        return axios.put(`${BASE_URL_API}playlists/${id}`, body, {headers})
+    }
+
+    const deletePlaylist = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`
+        }
+        return axios.delete(`${BASE_URL_API}playlists/${id}`, {headers})
+    }
+
+    const deleteItem = () => {
+        deletePlaylist(playlist.id)
+          .then(() => handleClose())
+          .then(() => history.push('/playlists'))
+    }
+
+    const deleteFrom = () => {
+        console.log(playlistTitles)
+        const index = playlistTitles.indexOf(titleOut);
+        if (index > -1) {
+            playlistTitles.splice(index, 1);
+        }
+        console.log(playlistTitles)
+        deleteTitle(playlist.id, playlistTitles)
+          .then(() => closeTitleMenu())
+          .then(() => window.location.reload())
+    }
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -153,7 +200,8 @@ const Playlist = ({playlist}) => {
         setAnchorEl(null);
     };
 
-    const handleTitleMenu = (event) => {
+    const handleTitleMenu = (title, event) => {
+        setTitleOut(title.id)
         setAnchorEl2(event.currentTarget);
     };
 
@@ -172,6 +220,9 @@ const Playlist = ({playlist}) => {
         setRunningTitle(e, playlist.titles[random]);
     };
 
+    console.log(playlist)
+    console.log(titleOut)
+
     return(
         <>
             <div className={classes.header}>
@@ -185,7 +236,7 @@ const Playlist = ({playlist}) => {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                    <MenuItem onClick={handleClose}>Supprimer la playlist</MenuItem>
+                    <MenuItem onClick={deleteItem}>Supprimer la playlist</MenuItem>
                 </Menu>
                 <Avatar variant={'square'} className={classes.avatar} alt={playlist.name} src={playlist.image ? playlist.image : "https://picsum.photos/700/500"} />
                 <h2>{playlist.name}</h2>
@@ -213,22 +264,22 @@ const Playlist = ({playlist}) => {
                                             </ListItemAvatar>
                                             <ListItemText primary={title.name} secondary={title.author.name+" · "+title.duration} />
                                             <ListItemSecondaryAction>
-                                                <IconButton edge="end" aria-label="delete" onClick={handleTitleMenu}>
+                                                <IconButton edge="end" aria-label="delete" onClick={(e) => handleTitleMenu(title, e)}>
                                                     <MoreVertIcon />
                                                 </IconButton>
-                                                <Menu
-                                                  id="simple-menu"
-                                                  anchorEl={anchorEl2}
-                                                  keepMounted
-                                                  open={Boolean(anchorEl2)}
-                                                  onClose={closeTitleMenu}
-                                                >
-                                                    <MenuItem onClick={closeTitleMenu}>Retirer de la playlist</MenuItem>
-                                                </Menu>
                                             </ListItemSecondaryAction>
                                         </ListItem>
                                     ))
                                 }
+                                <Menu
+                                  id="simple-menu"
+                                  anchorEl={anchorEl2}
+                                  keepMounted
+                                  open={Boolean(anchorEl2)}
+                                  onClose={closeTitleMenu}
+                                >
+                                    <MenuItem onClick={deleteFrom}>Retirer de la playlist</MenuItem>
+                                </Menu>
                             </List>
                             )
                             : <p>Pas de titres</p>

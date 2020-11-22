@@ -44,7 +44,7 @@ const PlaylistCard = ({item}) => {
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
-                    <h2>{item.name}</h2>
+                    <h3>{item.name}</h3>
                     <span>Créée le {new Date(item.createdAt).toLocaleDateString('fr-FR', options)}</span>
                     <br/>
                     <span>{item.titles.length} titre(s)</span>

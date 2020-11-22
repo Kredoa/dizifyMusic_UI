@@ -39,7 +39,7 @@ const AlbumItem = ({item}) => {
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
-                    <h2>{item.name}</h2>
+                    <h3>{item.name}</h3>
                     <span>Album de {item.author.name}</span>
                 </CardContent>
             </CardActionArea>

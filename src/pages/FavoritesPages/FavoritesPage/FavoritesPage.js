@@ -5,6 +5,7 @@ import FavoriteCard from "./FavoriteCard/FavoriteCard";
 import axios from "axios";
 import {BASE_URL_API} from "../../../assets/config/config";
 import UserContext from "../../../context/User/UserContext";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     body: {
@@ -38,12 +39,24 @@ const FavoritesPage = () => {
     const currentUser = userContext.user;
     const [favorites, setFavorites] = useState([]);
 
+    const deleteFromFavorites = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        axios.delete(`${BASE_URL_API}favorites/${id}`, { headers })
+          .then(
+            () => getAllFavorites(currentUser.token)
+          )
+          .then(res => setFavorites(res.data))
+    };
+
     useEffect(() => {
         getAllFavorites(userContext.user.token)
           .then(res => setFavorites(res.data))
     }, [setFavorites]);
 
     console.log(favorites)
+
     return(
         <div className={classes.body}>
             <h1>Favoris</h1>
@@ -51,7 +64,7 @@ const FavoritesPage = () => {
                 ? (
                     <div className={classes.favoritesTab}>
                         {favorites.map((item, index) =>
-                          <FavoriteCard item={item} key={index} />
+                          <FavoriteCard item={item} key={index} deleteFav={deleteFromFavorites}/>
                         )}
                     </div>
                   )
