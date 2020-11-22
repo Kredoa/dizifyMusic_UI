@@ -121,7 +121,8 @@ const SideMenu = ({menu, selected}) => {
 
     const isDisabled = (item) => {
         if(item.label === 'Favoris' || item.label === 'Playlists') {
-            return !userContext.user;
+            if(!userContext.user || userContext.user.role === 'ROLE_ADMIN')
+            return true;
         }
         return false;
     };

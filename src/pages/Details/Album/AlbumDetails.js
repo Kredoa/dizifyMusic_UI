@@ -19,6 +19,8 @@ import TitleContext from "../../../context/Title/TitleContext";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import axios from "axios";
+import AddToPlaylistModal from "../../../components/Modals/AddToPlaylistModal/AddToPlaylistModal";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -146,13 +148,30 @@ const AlbumDetails = ({id}) => {
 
 const Album = ({album}) => {
     const classes = useStyles();
+    const history = useHistory();
     const [nbListening, setListening] = useState(getRandomListening(1000000, 3000000));
     const [anchorEl, setAnchorEl] = useState(null);
-    const [anchorEl2, setAnchorEl2] = useState(null);
+    const [anchorEl2, setAnchorEl2] = useState(null)
+    const [anchorEl3, setAnchorEl3] = useState(null)
+    const [anchorEl4, setAnchorEl4] = useState(null)
+    const [open, setOpen] = useState(false);
+    const [titleToAdd, setTitleToAdd] = useState();
     const [isFavorite, setIsFavorite] = useState(album.favoriteId)
     const userContext = useContext(UserContext);
     const titleContext = useContext(TitleContext);
     const currentUser = userContext.user;
+
+    const closeModal = () => {
+        setTitleToAdd(null)
+        setOpen(false)
+    }
+
+    const openModal = (item) => {
+        console.log("open")
+        setTitleToAdd(item)
+        setOpen(true)
+        closeTitleMenu()
+    }
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -162,12 +181,42 @@ const Album = ({album}) => {
         setAnchorEl2(event.currentTarget);
     };
 
+    const handleTitleMenu2 = (event) => {
+        setAnchorEl3(event.currentTarget);
+    };
+
+    const handleTitleMenu3 = (event) => {
+        setAnchorEl4(event.currentTarget);
+    };
+
+    const deleteAlbumById = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.delete(`${BASE_URL_API}albums/${id}`, { headers })
+    };
+
+    const deleteAlbum = () => {
+        console.log("delete")
+        deleteAlbumById(album.id)
+          .then(() => handleClose())
+          .then(() => history.push('/albums'));
+    }
+
     const handleClose = () => {
         setAnchorEl(null);
     };
 
     const closeTitleMenu = () => {
         setAnchorEl2(null);
+    };
+
+    const closeTitleMenu2 = () => {
+        setAnchorEl3(null);
+    };
+
+    const closeTitleMenu3 = () => {
+        setAnchorEl4(null);
     };
 
     const setRunningTitle = (e, object) => {
@@ -215,12 +264,17 @@ const Album = ({album}) => {
         return axios.delete(`${BASE_URL_API}favorites/${id}`, { headers })
     };
 
-    console.log(album)
+    const deleteTitle = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.delete(`${BASE_URL_API}titles/${id}`, { headers })
+    };
 
     return(
         <>
             <div className={classes.header}>
-                { currentUser && (
+                { currentUser.role === 'ROLE_ADMIN' && (
                     <>
                         <IconButton className={classes.deleteButton} aria-label="delete" onClick={handleClick}>
                             <MoreVertIcon />
@@ -232,14 +286,14 @@ const Album = ({album}) => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={handleClose}>Supprimer cet album</MenuItem>
+                            <MenuItem onClick={deleteAlbum}>Supprimer cet album</MenuItem>
                         </Menu>
                     </>
                 )}
                 <Avatar variant={'square'} className={classes.avatar} alt={album.name} src={album.image} />
                 <h2>{album.name}</h2>
                 {
-                    currentUser
+                    (currentUser && currentUser.role === 'ROLE_USER')
                         ? (
                             isFavorite
                                 ? (
@@ -269,9 +323,6 @@ const Album = ({album}) => {
                     <List className={classes.list}>
                         {
                             album.titles.map((title, index) => {
-                                currentUser.role === 'ROLE_USER' && title.favoriteId
-                                  ? console.log("title", title.favoriteId)
-                                  : console.log("pas dans favoris")
                                 return(
                                   <ListItem button key={index} onClick={(e) => setRunningTitle(e, title)}>
                                       <ListItemAvatar>
@@ -296,24 +347,40 @@ const Album = ({album}) => {
                                             open={Boolean(anchorEl2)}
                                             onClose={closeTitleMenu}
                                             >
-                                                <MenuItem onClick={closeTitleMenu}>Ajouter à ma playlist</MenuItem>
+                                                <MenuItem onClick={() => openModal(title)}>Ajouter à ma playlist</MenuItem>
                                             </Menu>
                                         </ListItemSecondaryAction>
                                       )}
                                       {(currentUser.role === 'ROLE_USER' && !title.favoriteId) && (
                                         <ListItemSecondaryAction>
-                                            <IconButton edge="end" aria-label="delete" onClick={handleTitleMenu}>
+                                            <IconButton edge="end" aria-label="delete" onClick={handleTitleMenu2}>
                                                 <MoreVertIcon />
                                             </IconButton>
                                             <Menu
-                                              id="simple-menu"
-                                              anchorEl={anchorEl2}
+                                              id="complex-menu"
+                                              anchorEl={anchorEl3}
                                               keepMounted
-                                              open={Boolean(anchorEl2)}
-                                              onClose={closeTitleMenu}
+                                              open={Boolean(anchorEl3)}
+                                              onClose={closeTitleMenu2}
                                             >
-                                                <MenuItem onClick={closeTitleMenu}>Ajouter à ma playlist</MenuItem>
-                                                <MenuItem onClick={() => addTitleToFavorites(title.id).then(closeTitleMenu)}>Ajouter au favoris</MenuItem>
+                                                <MenuItem onClick={() => openModal(title)}>Ajouter à ma playlist</MenuItem>
+                                                <MenuItem onClick={() => addTitleToFavorites(title.id).then(closeTitleMenu2)}>Ajouter au favoris</MenuItem>
+                                            </Menu>
+                                        </ListItemSecondaryAction>
+                                      )}
+                                      {(currentUser.role === 'ROLE_ADMIN') && (
+                                        <ListItemSecondaryAction>
+                                            <IconButton edge="end" aria-label="delete" onClick={handleTitleMenu3}>
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                            <Menu
+                                              id="complex-menu"
+                                              anchorEl={anchorEl4}
+                                              keepMounted
+                                              open={Boolean(anchorEl4)}
+                                              onClose={closeTitleMenu3}
+                                            >
+                                                <MenuItem onClick={() => deleteTitle(title.id).then(() => closeTitleMenu3()).then(() => window.location.reload())}>Supprimer ce titre</MenuItem>
                                             </Menu>
                                         </ListItemSecondaryAction>
                                       )}
@@ -321,6 +388,7 @@ const Album = ({album}) => {
                                 )
                             })
                         }
+                        <AddToPlaylistModal item={titleToAdd} open={open} handleClose={closeModal} />
                     </List>
                 </div>
             </div>

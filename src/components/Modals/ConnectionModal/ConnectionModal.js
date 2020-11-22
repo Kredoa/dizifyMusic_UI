@@ -7,6 +7,8 @@ import {BACKGROUND_COLOR, ERROR_COLOR} from "../../../assets/theme/colors";
 import {BASE_URL_API} from "../../../assets/config/config";
 import axios from "axios";
 import UserContext from "../../../context/User/UserContext";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const useStyles = makeStyles(theme => ({
     modalBackground: {
@@ -41,16 +43,34 @@ const LogInBody = ({handleClose}) => {
     const classes = useStyles();
     const [error, setError] = useState();
     const userContext = useContext(UserContext);
+    const [checked, setChecked] = useState(false);
+
+    const handleCheck = (event) => {
+        setChecked(event.target.checked);
+    };
 
     const connectUser = (username, pwd) => {
         const body = {
             username: username,
             password: pwd
         }
-        console.log(body)
-        console.log("connect")
         axios
           .post(`${BASE_URL_API}auth/signin`, body)
+          .then(res => {
+              console.log(res)
+              userContext.setUser(res.data)
+          })
+          .then(() => handleClose())
+          .catch(error => setError('Identifiants Invalides'))
+    }
+
+    const connectAdmin = (username, pwd) => {
+        const body = {
+            username: username,
+            password: pwd
+        }
+        axios
+          .post(`${BASE_URL_API}auth/admin/signin`, body)
           .then(res => {
               console.log(res)
               userContext.setUser(res.data)
@@ -63,7 +83,11 @@ const LogInBody = ({handleClose}) => {
         console.log("submit");
         const un = event.target.username.value;
         const pd = event.target.password.value;
-        connectUser(un, pd);
+        if(checked) {
+            connectAdmin(un, pd);
+        } else {
+            connectUser(un, pd);
+        }
     };
 
     return(
@@ -80,6 +104,16 @@ const LogInBody = ({handleClose}) => {
                     label="Mot de passe"
                     type="password"
                     autoComplete="current-password"
+                />
+                <FormControlLabel
+                  control={
+                      <Checkbox
+                        checked={checked}
+                        onChange={handleCheck}
+                        color={'default'}
+                      />
+                  }
+                  label="S'identifier en tant qu'Admin"
                 />
                 { error && <span className={classes.error}>{error}</span>}
                 <Button className={classes.submit} type={'submit'} variant={"contained"} color={"primary"} >Confirmer</Button>

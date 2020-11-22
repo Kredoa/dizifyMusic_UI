@@ -14,6 +14,7 @@ import TitleContext from "../../../context/Title/TitleContext";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import axios from "axios";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -135,6 +136,7 @@ const AuthorDetails = ({id}) => {
 
 const Artist = ({artist}) => {
     const classes = useStyles();
+    const history = useHistory();
     const userContext = useContext(UserContext);
     const titleContext = useContext(TitleContext);
     const currentUser = userContext.user;
@@ -157,6 +159,20 @@ const Artist = ({artist}) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const deleteAuthorById = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`,
+        };
+        return axios.delete(`${BASE_URL_API}albums/${id}`, { headers })
+    };
+
+    const deleteAuthor = () => {
+        console.log("delete Author")
+        deleteAuthorById(artist.id)
+          .then(() => handleClose())
+          .then(() => history.push('/artists'));
+    }
 
     const setRunningTitle = (e, object) => {
         e.preventDefault();
@@ -191,7 +207,7 @@ const Artist = ({artist}) => {
     return(
         <>
             <div className={classes.header}>
-                { currentUser && (
+                { currentUser.role === 'ROLE_ADMIN' && (
                     <>
                         <IconButton className={classes.deleteButton} aria-label="delete" onClick={handleClick}>
                             <MoreVertIcon />
@@ -203,14 +219,14 @@ const Artist = ({artist}) => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={handleClose}>Supprimer cet Auteur</MenuItem>
+                            <MenuItem onClick={deleteAuthor}>Supprimer cet Auteur</MenuItem>
                         </Menu>
                     </>
                 )}
                 <Avatar className={classes.avatar} alt={artist.name} src={"https://i.pravatar.cc/200"} />
                 <h2>{artist.name}</h2>
                 {
-                    currentUser
+                    (currentUser && currentUser.role === 'ROLE_USER')
                         ? (
                             isFavorite
                                 ? (

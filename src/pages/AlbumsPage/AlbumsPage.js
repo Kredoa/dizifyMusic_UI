@@ -38,8 +38,6 @@ const AlbumsPage = () => {
         });
     }, [setAlbums]);
 
-    console.log(albums)
-
     return(
         <div className={classes.body}>
             <h1>Albums</h1>
