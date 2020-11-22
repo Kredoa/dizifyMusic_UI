@@ -264,12 +264,18 @@ const FormControlAdd = ({handleClose}) => {
     <form onSubmit={onSubmit}>
         <FormControl className={classes.FormControl}>
             <InputLabel className={classes.Label} htmlFor='selectType'>Que souhaitez-vous ajouter ?</InputLabel>
-            <Select value={data} id='selectType' className={classes.Field} onChange={handleSelectChange}>
-                <MenuItem value={'title'}>Titre</MenuItem>
-                <MenuItem value={'artist'}>Artiste</MenuItem>
-                <MenuItem value={'album'}>Album</MenuItem>
-                <MenuItem value={'playlist'}>Playlist</MenuItem>
-            </Select>
+                {currentUser.role === 'ROLE_ADMIN' && (
+                    <Select value={data} id='selectType' className={classes.Field} onChange={handleSelectChange}>
+                        <MenuItem value={'title'}>Titre</MenuItem>
+                        <MenuItem value={'artist'}>Artiste</MenuItem>
+                        <MenuItem value={'album'}>Album</MenuItem>
+                    </Select>
+                )}
+                {currentUser.role === 'ROLE_USER' && (
+                    <Select value={data} id='selectType' className={classes.Field} onChange={handleSelectChange}>
+                        <MenuItem value={'playlist'}>Playlist</MenuItem>
+                    </Select>
+                )}   
             <Body type={data} /> 
             <div className={classes.footer}>
                 <Button variant={"contained"}  className={classes.CancelBtn} onClick={handleClose}>

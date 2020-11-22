@@ -55,7 +55,7 @@ const LogInBody = ({handleClose}) => {
             password: pwd
         }
         axios
-          .post(`${BASE_URL_API}auth/admin/signin`, body)
+          .post(`${BASE_URL_API}auth/signin`, body)
           .then(res => {
               console.log(res)
               userContext.setUser(res.data)
