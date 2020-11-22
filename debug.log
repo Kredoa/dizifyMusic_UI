@@ -1,3 +1,16 @@
 [1108/135501.043:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)
 [1109/221840.388:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)
 [1110/202754.804:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)
+[1113/043203.139:ERROR:process_reader_win.cc(123)] NtOpenThread: {Accès refusé} Un processus a demandé l’accès a un objet, mais il ne bénéficie pas des autorisations nécessaires. (0xc0000022)
+[1113/043203.139:ERROR:process_reader_win.cc(123)] NtOpenThread: {Accès refusé} Un processus a demandé l’accès a un objet, mais il ne bénéficie pas des autorisations nécessaires. (0xc0000022)
+[1113/043203.141:ERROR:exception_snapshot_win.cc(99)] thread ID 11832 not found in process
+[1113/043203.141:ERROR:exception_snapshot_win.cc(99)] thread ID 20696 not found in process
+[1113/043203.143:ERROR:process_reader_win.cc(123)] NtOpenThread: {Accès refusé} Un processus a demandé l’accès a un objet, mais il ne bénéficie pas des autorisations nécessaires. (0xc0000022)
+[1113/043203.143:ERROR:exception_snapshot_win.cc(99)] thread ID 21344 not found in process
+[1113/043203.145:ERROR:process_reader_win.cc(123)] NtOpenThread: {Accès refusé} Un processus a demandé l’accès a un objet, mais il ne bénéficie pas des autorisations nécessaires. (0xc0000022)
+[1113/043203.145:ERROR:exception_snapshot_win.cc(99)] thread ID 22652 not found in process
+[1113/043203.146:ERROR:process_reader_win.cc(123)] NtOpenThread: {Accès refusé} Un processus a demandé l’accès a un objet, mais il ne bénéficie pas des autorisations nécessaires. (0xc0000022)
+[1113/043203.147:ERROR:exception_snapshot_win.cc(99)] thread ID 24760 not found in process
+[1113/043203.152:ERROR:process_reader_win.cc(123)] NtOpenThread: {Accès refusé} Un processus a demandé l’accès a un objet, mais il ne bénéficie pas des autorisations nécessaires. (0xc0000022)
+[1113/043203.152:ERROR:exception_snapshot_win.cc(99)] thread ID 5268 not found in process
+[1122/153912.870:ERROR:directory_reader_win.cc(43)] FindFirstFile: Le chemin d’accès spécifié est introuvable. (0x3)

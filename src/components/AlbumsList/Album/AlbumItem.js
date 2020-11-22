@@ -3,33 +3,35 @@ import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import {USER_ROLE_COLOR} from "../../../assets/theme/colors";
 import PropTypes from "prop-types";
-import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../../../assets/datas/Types/entities";
 
 
 const useStyles = makeStyles(theme => ({
-    card: {
-        maxWidth: '150px',
+    cardArea: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        '&>img': {
+            maxWidth: '10em',
+            height: '10em',
+        },
     },
     cardContent: {
-        padding: '5px',
-        textAlign: 'center',
+        padding: '10px',
         '&>span': {
             color: USER_ROLE_COLOR,
         },
     },
 }));
 
-const Playlist = ({item}) => {
+const AlbumItem = ({item}) => {
     const classes = useStyles();
 
     return(
-        <Card className={classes.card}>
-            <CardActionArea >
+        <Card>
+            <CardActionArea className={classes.cardArea} href={`/albums?id=${item.id}`}>
                 <CardMedia
                     component="img"
                     alt={item.name}
@@ -37,16 +39,16 @@ const Playlist = ({item}) => {
                     title={item.name}
                 />
                 <CardContent className={classes.cardContent}>
-                    <h2>{item.name}</h2>
-                    <span>{item.titres.length} titre(s)</span>
+                    <h3>{item.name}</h3>
+                    <span>Album de {item.author.name}</span>
                 </CardContent>
             </CardActionArea>
         </Card>
     );
 };
 
-Playlist.propTypes = {
+AlbumItem.propTypes = {
     item: PropTypes.object.isRequired,
 };
 
-export default Playlist;
+export default AlbumItem;

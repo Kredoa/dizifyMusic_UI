@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {BLACK} from "../../assets/theme/colors";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import PropTypes from "prop-types";
-import Album from "./Album/Album";
+import AlbumItem from "./Album/AlbumItem";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import {BASE_URL_API} from "../../assets/config/config";
 
 
 const useStyles = makeStyles(theme => ({
@@ -28,40 +29,62 @@ const useStyles = makeStyles(theme => ({
         display: 'grid',
         // gridTemplateAreas: '"card card card card card card card"',
         // gridGap: '20px',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
         gridGap: '1rem',
     },
-}))
+    loading: {
+        height: '220px',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
+}));
 
-const AlbumsList = ({albums}) => {
+const getAlbums = async () => {
+    const res = await fetch(`${BASE_URL_API}albums`);
+    return await res.json();
+};
+
+const AlbumsList = () => {
 
     const classes = useStyles();
+    const [albums, setAlbums] = useState();
 
-    const shuffled = albums.sort(function(){return .5 - Math.random()});
-
-    const sortedAlbums = shuffled.slice(0,3);
+    useEffect(() => {
+        getAlbums().then(res => {
+            const shuffled = res.sort(function(){return .5 - Math.random()});
+            const sortedAlbums = shuffled.slice(0,3);
+            setAlbums(sortedAlbums);
+        });
+    }, [setAlbums]);
 
     return(
         <div className={classes.albumsDiv}>
             <div className={classes.title}>
-                <a href="#">
+                <a href={'/albums'}>
                     <h2>
                         Albums
                     </h2>
                     <ChevronRightIcon />
                 </a>
             </div>
-            <div className={classes.list}>
-                {sortedAlbums.map((fav, index) =>
-                    <Album item={fav} key={index}/>
-                )}
-            </div>
+            { albums
+                ? (
+                    <div className={classes.list}>
+                        {albums.map((alb, index) =>
+                            <AlbumItem item={alb} key={index}/>
+                        )}
+                    </div>
+                )
+                : (
+                    <div className={classes.loading}>
+                        <CircularProgress />
+                    </div>
+                )
+            }
         </div>
     );
 }
-
-AlbumsList.propTypes = {
-    albums: PropTypes.array.isRequired,
-};
 
 export default AlbumsList;

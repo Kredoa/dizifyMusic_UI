@@ -1,13 +1,21 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
-import {BLACK} from "../../assets/theme/colors";
+import {BLACK, HOVER_UNLOGGED_COLOR} from "../../assets/theme/colors";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import PropTypes from "prop-types";
-import Playlist from "./Playlist/Playlist";
+import PlaylistItem from "./Playlist/PlaylistItem";
+import UserContext from "../../context/User/UserContext";
+import axios from "axios";
+import {BASE_URL_API} from "../../assets/config/config";
 
 const useStyles = makeStyles(theme => ({
     playlistsDiv:{
         marginBottom: '20px',
+        position: 'relative',
+    },
+    playlistsDivLoggedOut:{
+        marginBottom: '20px',
+        position: 'relative',
+        height: '250px',
     },
     title: {
         '&>a': {
@@ -25,38 +33,87 @@ const useStyles = makeStyles(theme => ({
     list: {
         padding: '5px 0',
         display: 'grid',
-        // gridTemplateAreas: '"card card card card card card card"',
-        // gridGap: '20px',
         gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
         gridGap: '1rem',
     },
-}))
+    hover: {
+        backgroundColor: HOVER_UNLOGGED_COLOR,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '260px',
+        zIndex: 10,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        '&>p': {
+            fontWeight: '500',
+            fontSize: '20px'
+        }
+    },
+    emptyList: {
+        width: '100%',
+        height: '260px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+}));
 
-const PlaylistList = ({playlists}) => {
+const getPlaylists = (token) => {
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+    };
+    return axios.get(`${BASE_URL_API}playlists`, { headers })
+};
+
+const PlaylistList = () => {
 
     const classes = useStyles();
+    const userContext = useContext(UserContext);
+    const currentUser = userContext.user
+    const [playlists, setPlaylists] = useState([]);
+
+    useEffect(() => {
+        if(currentUser) {
+            getPlaylists(currentUser.token)
+              .then(res => setPlaylists(res.data))
+        }
+    }, [currentUser, setPlaylists]);
 
     return(
-        <div className={classes.playlistsDiv}>
+        <div className={userContext.user ? classes.playlistsDiv : classes.playlistsDivLoggedOut}>
             <div className={classes.title}>
-                <a href="#">
+                <a href={"/playlists"}>
                     <h2>
                         Playlists
                     </h2>
                     <ChevronRightIcon />
                 </a>
             </div>
-            <div className={classes.list}>
-                {playlists.map((fav, index) =>
-                    <Playlist item={fav} key={index}/>
-                )}
-            </div>
+            { !userContext.user
+                ? (
+                    <div className={classes.hover}>
+                        <p>Vous devez être connectés pour accéder aux playlists.</p>
+                    </div>
+                )
+                : playlists.length === 0
+                    ? (
+                      <div className={classes.emptyList}>
+                          <p>Vous n'avez pas de playlists pour le moment</p>
+                      </div>
+                    )
+                    : (
+                      <div className={classes.list}>
+                          {playlists.map((fav, index) =>
+                            <PlaylistItem item={fav} key={index}/>
+                          )}
+                      </div>
+                    )
+            }
         </div>
     );
-}
-
-PlaylistList.propTypes = {
-    playlists: PropTypes.array.isRequired,
 };
 
 export default PlaylistList;
