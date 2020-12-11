@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import {createMuiTheme, makeStyles} from "@material-ui/core/styles";
@@ -11,7 +11,14 @@ import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import {playlist} from "../../../assets/datas/Playlists/playlist";
+import axios from "axios";
+import {BASE_URL_API} from "../../../assets/config/config";
+import UserContext from "../../../context/User/UserContext";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import TitleContext from "../../../context/Title/TitleContext";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -73,35 +80,168 @@ const useStyles = makeStyles(theme => ({
     list: {
         width: '100%',
     },
+    deleteButton: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+    }
 }));
 
-const PlaylistDetails = () => {
+const useStyleParent = makeStyles(theme => ({
+    loading: {
+        height: '100vh',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
+}));
+
+const getPlaylist = (token, id) => {
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+    };
+    return axios.get(`${BASE_URL_API}playlists/${id}`, { headers })
+};
+
+const PlaylistDetails = ({id}) => {
+    const userContext = useContext(UserContext);
+    const currentUser = userContext.user;
+    const [playlist, setPlaylist] = useState();
+    const classesParent = useStyleParent();
+
+    useEffect(() => {
+        getPlaylist(currentUser.token, id)
+          .then(res => setPlaylist(res.data))
+    }, [currentUser, setPlaylist]);
 
     const theme = createMuiTheme({
         image: {
-            url: playlist.image ? playlist.image : "https://picsum.photos/700/500",
+            url: playlist
+              ? playlist.image || "https://picsum.photos/700/500"
+              : "https://picsum.photos/700/500",
         }
     });
 
     return (
         <>
             <ThemeProvider theme={theme}>
-                <Playlist/>
+                { playlist
+                  ? <Playlist playlist={playlist}/>
+                  : (
+                    <div className={classesParent.loading}>
+                        <CircularProgress />
+                    </div>
+                  )
+                }
             </ThemeProvider>
         </>
     );
 };
 
-const Playlist = () => {
+const Playlist = ({playlist}) => {
     const classes = useStyles();
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    const titleContext = useContext(TitleContext);
+    const userContext = useContext(UserContext);
+    const currentUser = userContext.user;
+    const history = useHistory();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorEl2, setAnchorEl2] = useState(null);
+    const [playlistTitles, setPlaylistTitles] = useState([])
+    const [titleOut, setTitleOut] = useState()
+
+    useEffect(() => {
+        const titles = [];
+        playlist.titles.map((t) => titles.push(t.id))
+        setPlaylistTitles(titles)
+    }, [playlist])
+
+    const deleteTitle = (id, titles) => {
+        const body = {
+            title_ids: titles
+        }
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`
+        }
+        return axios.put(`${BASE_URL_API}playlists/${id}`, body, {headers})
+    }
+
+    const deletePlaylist = (id) => {
+        const headers = {
+            'Authorization': `Bearer ${currentUser.token}`
+        }
+        return axios.delete(`${BASE_URL_API}playlists/${id}`, {headers})
+    }
+
+    const deleteItem = () => {
+        deletePlaylist(playlist.id)
+          .then(() => handleClose())
+          .then(() => history.push('/playlists'))
+    }
+
+    const deleteFrom = () => {
+        console.log(playlistTitles)
+        const index = playlistTitles.indexOf(titleOut);
+        if (index > -1) {
+            playlistTitles.splice(index, 1);
+        }
+        console.log(playlistTitles)
+        deleteTitle(playlist.id, playlistTitles)
+          .then(() => closeTitleMenu())
+          .then(() => window.location.reload())
+    }
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleTitleMenu = (title, event) => {
+        setTitleOut(title.id)
+        setAnchorEl2(event.currentTarget);
+    };
+
+    const closeTitleMenu = () => {
+        setAnchorEl2(null);
+    };
+
+    const setRunningTitle = (e, object) => {
+        e.preventDefault();
+        titleContext.setTitle(object);
+    };
+
+    const randomPlay = (e) => {
+        e.preventDefault();
+        const random = Math.floor(Math.random() * playlist.titles.length);
+        setRunningTitle(e, playlist.titles[random]);
+    };
+
+    console.log(playlist)
+    console.log(titleOut)
 
     return(
         <>
             <div className={classes.header}>
+                <IconButton className={classes.deleteButton} aria-label="delete" onClick={handleClick}>
+                    <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                    <MenuItem onClick={deleteItem}>Supprimer la playlist</MenuItem>
+                </Menu>
                 <Avatar variant={'square'} className={classes.avatar} alt={playlist.name} src={playlist.image ? playlist.image : "https://picsum.photos/700/500"} />
                 <h2>{playlist.name}</h2>
-                <span>Crée le {new Date(playlist.createdAt)}</span>
-                <Button variant={"contained"} className={classes.playButton} color={"primary"}>Lecture aléatoire</Button>
+                <span>Crée le {new Date(playlist.createdAt).toLocaleDateString('fr-FR', options)}</span>
+                <Button variant={"contained"} className={classes.playButton} color={"primary"} onClick={(e) => randomPlay(e)} disabled={!(playlist.titles.length > 0)}>Lecture aléatoire</Button>
             </div>
             <div className={classes.body}>
                 <div className={classes.content}>
@@ -124,16 +264,25 @@ const Playlist = () => {
                                             </ListItemAvatar>
                                             <ListItemText primary={title.name} secondary={title.author.name+" · "+title.duration} />
                                             <ListItemSecondaryAction>
-                                                <IconButton edge="end" aria-label="delete">
+                                                <IconButton edge="end" aria-label="delete" onClick={(e) => handleTitleMenu(title, e)}>
                                                     <MoreVertIcon />
                                                 </IconButton>
                                             </ListItemSecondaryAction>
                                         </ListItem>
                                     ))
                                 }
+                                <Menu
+                                  id="simple-menu"
+                                  anchorEl={anchorEl2}
+                                  keepMounted
+                                  open={Boolean(anchorEl2)}
+                                  onClose={closeTitleMenu}
+                                >
+                                    <MenuItem onClick={deleteFrom}>Retirer de la playlist</MenuItem>
+                                </Menu>
                             </List>
                             )
-                            : <h3>Pas de titres</h3>
+                            : <p>Pas de titres</p>
                     }
                 </div>
             </div>

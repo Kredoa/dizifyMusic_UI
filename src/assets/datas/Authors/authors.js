@@ -1,4 +1,4 @@
-import {ARTISTE_TYPE} from "../Types/entities";
+import {ARTISTE_TYPE} from "../../config/Types/entities";
 
 export const authorslist = [
     //Artiste

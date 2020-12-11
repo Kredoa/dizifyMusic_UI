@@ -1,27 +1,34 @@
-import React from "react";
+import React, {useContext} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import FavorisList from "../../../components/FavoritesList/FavorisList";
 import { favoritesList } from "../../../assets/datas/Favorites/favoritesList";
 import PlaylistList from "../../../components/PlaylistsList/PlaylistsList";
 import {playlists} from "../../../assets/datas/Playlists/playlists";
 import AlbumsList from "../../../components/AlbumsList/AlbumsList";
-import AuthorsList from "../../../components/AuthorsList/AuhtorsList";
-import {authorslist} from "../../../assets/datas/Authors/authors";
-import {albumlist} from "../../../assets/datas/Albums/albums";
+import AuthorsList from "../../../components/AuthorsList/AuthorsList";
+import UserContext from "../../../context/User/UserContext";
 
 const useStyles = makeStyles(theme => ({
     body: {
         padding: '20px',
     }
 }));
+
 const HomePage = () => {
-    const classes = useStyles()
+    const classes = useStyles();
+    const userContext = useContext(UserContext)
+    const currentUser = userContext.user
+
     return(
         <div className={classes.body}>
-            <FavorisList favorites={favoritesList} />
-            <PlaylistList playlists={playlists}/>
-            <AlbumsList albums={albumlist}/>
-            <AuthorsList authors={authorslist}/>
+          {(!currentUser || currentUser.role === 'ROLE_USER') && (
+            <>
+              <FavorisList />
+              <PlaylistList />
+            </>
+          )}
+            <AlbumsList />
+            <AuthorsList />
         </div>
     )
 }

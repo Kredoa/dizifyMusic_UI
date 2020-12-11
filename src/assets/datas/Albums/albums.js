@@ -1,4 +1,4 @@
-import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../Types/entities";
+import {ALBUM_TYPE, ARTISTE_TYPE, TITRE_TYPE} from "../../config/Types/entities";
 
 export const albumlist = [
     //AlbumItem
